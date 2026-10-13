@@ -4,7 +4,6 @@ import FinderSync
 private enum RightMenuMiniPreferences {
     static let suiteName = "com.codex.RightMenuMini.shared"
     static let isMenuEnabled = "isMenuEnabled"
-    static let isNewTextEnabled = "isNewTextEnabled"
     static let isTerminalEnabled = "isTerminalEnabled"
     static let isCopyPathEnabled = "isCopyPathEnabled"
     static let isGroupedMenuEnabled = "isGroupedMenuEnabled"
@@ -14,15 +13,18 @@ private enum RightMenuMiniPreferences {
     static let chineseValue = "zh-Hans"
     static let englishValue = "en"
 
-    static let defaultValues: [String: Bool] = [
+    static let defaultValues: [String: Bool] = Dictionary(uniqueKeysWithValues:
+        NewFileKind.allCases.map { ($0.preferenceKey, true) }
+    ).merging([
         isMenuEnabled: true,
-        isNewTextEnabled: true,
         isTerminalEnabled: true,
         isCopyPathEnabled: true,
         isGroupedMenuEnabled: false
-    ]
+    ]) { _, value in value }
     static let stringDefaultValues: [String: String] = [
-        languageMode: systemValue
+        languageMode: systemValue,
+        MenuDisplayMode.preferenceKey: "",
+        MenuLayout.preferenceKey: MenuLayout().serialized
     ]
     static var registeredDefaults: [String: Any] {
         var values: [String: Any] = defaultValues.mapValues { $0 as Any }
@@ -168,109 +170,6 @@ private enum MenuText {
     }
 }
 
-private enum MenuWishAssets {
-    // MenuWish 专属标志：原版三颗四角星（纯矢量，支持 Hover 纯白反色与深浅色模式）
-    static let originalSparklesSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="black">
-      <path d="M 8.70 4.75 L 9.82 7.88 L 12.95 9.00 L 9.82 10.12 L 8.70 13.25 L 7.58 10.12 L 4.45 9.00 L 7.58 7.88 Z" />
-      <path d="M 4.15 2.65 L 4.77 4.13 L 6.25 4.75 L 4.77 5.37 L 4.15 6.85 L 3.53 5.37 L 2.05 4.75 L 3.53 4.13 Z" />
-      <path d="M 13.65 11.55 L 14.19 12.81 L 15.45 13.35 L 14.19 13.89 L 13.65 15.15 L 13.11 13.89 L 11.85 13.35 L 13.11 12.81 Z" />
-    </svg>
-    """
-
-    // Phosphor Icons Medium: 适度加粗（+30% 粗度，完美契合 macOS 菜单字重与可读性）
-    static let phosphorFileTextSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="black">
-      <path stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/>
-    </svg>
-    """
-
-    static let phosphorTerminalSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="black">
-      <path stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"/>
-    </svg>
-    """
-
-    static let phosphorLinkSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="black">
-      <path stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/>
-    </svg>
-    """
-
-    nonisolated(unsafe) private static var cache: [String: NSImage] = [:]
-    private static let lock = NSLock()
-
-    static func image(named name: String, size: NSSize = NSSize(width: 16, height: 16)) -> NSImage? {
-        let key = "\(name)_\(Int(size.width))x\(Int(size.height))"
-        lock.lock()
-        if let cached = cache[key] {
-            lock.unlock()
-            return cached
-        }
-        lock.unlock()
-
-        let svgString: String?
-        switch name {
-        case "sparkles", "menuwish-stars":
-            svgString = originalSparklesSVG
-        case "file-text":
-            svgString = phosphorFileTextSVG
-        case "square-terminal", "terminal":
-            svgString = phosphorTerminalSVG
-        case "link":
-            svgString = phosphorLinkSVG
-        default:
-            svgString = nil
-        }
-
-        guard let svg = svgString,
-              let data = svg.data(using: .utf8),
-              let svgImage = NSImage(data: data) else {
-            return nil
-        }
-
-        let rendered = NSImage(size: size)
-        for scale in [1.0, 2.0] {
-            let pxW = Int(size.width * scale)
-            let pxH = Int(size.height * scale)
-            let colorSpace = CGColorSpaceCreateDeviceGray()
-            guard let ctx = CGContext(
-                data: nil,
-                width: pxW,
-                height: pxH,
-                bitsPerComponent: 8,
-                bytesPerRow: pxW * 2,
-                space: colorSpace,
-                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-            ) else {
-                continue
-            }
-            ctx.interpolationQuality = .high
-            ctx.setShouldAntialias(true)
-            ctx.scaleBy(x: scale, y: scale)
-
-            let g = NSGraphicsContext(cgContext: ctx, flipped: false)
-            NSGraphicsContext.saveGraphicsState()
-            NSGraphicsContext.current = g
-            svgImage.draw(in: NSRect(origin: .zero, size: size))
-            NSGraphicsContext.restoreGraphicsState()
-
-            if let cgImage = ctx.makeImage() {
-                let rep = NSBitmapImageRep(cgImage: cgImage)
-                rep.size = size
-                rendered.addRepresentation(rep)
-            }
-        }
-
-        rendered.isTemplate = true
-
-        lock.lock()
-        cache[key] = rendered
-        lock.unlock()
-
-        return rendered
-    }
-}
 
 @objc(FinderSync)
 final class FinderSync: FIFinderSync {
@@ -291,50 +190,53 @@ final class FinderSync: FIFinderSync {
             return nil
         }
 
-        let actionItems = enabledActionItems(preferences: preferences)
-        guard !actionItems.isEmpty else {
-            return nil
+        let mode = MenuDisplayMode.resolved(
+            RightMenuMiniPreferences.resolvedString(MenuDisplayMode.preferenceKey),
+            legacyGrouped: RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isGroupedMenuEnabled, in: preferences))
+        let layout = MenuLayout(serialized: RightMenuMiniPreferences.resolvedString(MenuLayout.preferenceKey))
+        let groups = layout.menuGroups(mode: mode, values: preferences)
+        guard !groups.isEmpty else { return nil }
+        let menu = NSMenu(title: "MenuWish")
+        for group in groups {
+            let actionItems = group.actions.map(makeActionItem)
+            if mode == .flat {
+                actionItems.forEach { menu.addItem($0) }
+            } else {
+                let title = group.title(isEnglish: MenuText.isEnglish)
+                let groupItem = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+                groupItem.image = MenuWishAssets.finderMenuImage(named: "sparkles", size: NSSize(width: 18, height: 18),
+                                                                appearance: finderMenuAppearance)
+                let submenu = NSMenu(title: title)
+                actionItems.forEach { submenu.addItem($0) }
+                groupItem.submenu = submenu
+                menu.addItem(groupItem)
+            }
         }
-
-        let menuTitle = "MenuWish"
-        let menu = NSMenu(title: menuTitle)
-
-        if RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isGroupedMenuEnabled, in: preferences) {
-            let groupItem = NSMenuItem(title: menuTitle, action: nil, keyEquivalent: "")
-            groupItem.image = MenuWishAssets.image(named: "sparkles", size: NSSize(width: 18, height: 18))
-            let submenu = NSMenu(title: menuTitle)
-            actionItems.forEach { submenu.addItem($0) }
-            groupItem.submenu = submenu
-            menu.addItem(groupItem)
-        } else {
-            actionItems.forEach { menu.addItem($0) }
-        }
-
         return menu
     }
 
-    private func enabledActionItems(preferences: [String: Bool]) -> [NSMenuItem] {
-        var items: [NSMenuItem] = []
-
-        if RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isNewTextEnabled, in: preferences) {
-            items.append(menuItem(title: MenuText.localized("新建 Text", "New Text"), symbolName: "file-text", action: #selector(createTextFile(_:))))
+    private func makeActionItem(_ action: MenuAction) -> NSMenuItem {
+        let selector: Selector = action.fileKind != nil ? #selector(createFile(_:))
+            : (action == .terminal ? #selector(openTerminal(_:)) : #selector(copyPath(_:)))
+        let item = menuItem(title: action.title(isEnglish: MenuText.isEnglish), symbolName: action.symbolName, action: selector)
+        if let kind = action.fileKind, let index = NewFileKind.allCases.firstIndex(of: kind) {
+            // Finder copies menu items; tag survives, representedObject does not.
+            item.tag = index
         }
+        return item
+    }
 
-        if RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isTerminalEnabled, in: preferences) {
-            items.append(menuItem(title: MenuText.localized("进入终端", "Open Terminal"), symbolName: "square-terminal", action: #selector(openTerminal(_:))))
-        }
-
-        if RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isCopyPathEnabled, in: preferences) {
-            items.append(menuItem(title: MenuText.localized("拷贝路径", "Copy Path"), symbolName: "link", action: #selector(copyPath(_:))))
-        }
-
-        return items
+    private var finderMenuAppearance: NSAppearance {
+        // Read the system style at menu creation, independently of MenuWish's
+        // own appearance override. FinderSync callbacks need not be main-actor isolated.
+        let isDark = UserDefaults.standard.string(forKey: "AppleInterfaceStyle") == "Dark"
+        return NSAppearance(named: isDark ? .darkAqua : .aqua)!
     }
 
     private func menuItem(title: String, symbolName: String, action: Selector) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
         item.target = self
-        if let icon = MenuWishAssets.image(named: symbolName, size: NSSize(width: 16, height: 16)) {
+        if let icon = MenuWishAssets.finderMenuImage(named: symbolName, appearance: finderMenuAppearance) {
             item.image = icon
         } else {
             item.image = symbol(symbolName)
@@ -342,12 +244,11 @@ final class FinderSync: FIFinderSync {
         return item
     }
 
-    @objc private func createTextFile(_ sender: Any?) {
-        guard let folderURL = bestFolderURL() else {
-            return
-        }
-
-        performInContainingApp(action: "new-text", folderURL: folderURL)
+    @objc private func createFile(_ sender: NSMenuItem) {
+        guard NewFileKind.allCases.indices.contains(sender.tag),
+              let folderURL = bestFolderURL() else { return }
+        let kind = NewFileKind.allCases[sender.tag]
+        performInContainingApp(action: kind.action, folderURL: folderURL)
     }
 
     @objc private func openTerminal(_ sender: Any?) {
@@ -406,7 +307,9 @@ final class FinderSync: FIFinderSync {
 
     private func folderURL(for url: URL) -> URL {
         var isDirectory: ObjCBool = false
-        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory), isDirectory.boolValue {
+        if FileManager.default.fileExists(atPath: url.path, isDirectory: &isDirectory),
+           isDirectory.boolValue,
+           (try? url.resourceValues(forKeys: [.isPackageKey]).isPackage) != true {
             return url
         }
 

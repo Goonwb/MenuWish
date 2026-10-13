@@ -15,6 +15,19 @@
 		0A0A00000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000019 /* Assets.xcassets */; };
 		0A0A00000000000000000007 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000001C /* InfoPlist.strings */; };
 		0A0A00000000000000000008 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 0A0A0000000000000000001D /* InfoPlist.strings */; };
+		0B0B00000000000000000201 /* NewFileKind.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000101; };
+		0B0B00000000000000000202 /* NewFileCreator.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000102; };
+		0B0B00000000000000000203 /* UpdateChecker.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000103; };
+		0B0B00000000000000000204 /* Templates */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000104; };
+		0B0B00000000000000000205 /* NewFileKind.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000101; };
+		0B0B00000000000000000206 /* ReleaseNotesView.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000105; };
+		0B0B00000000000000000207 /* MenuLayout.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000106; };
+		0B0B00000000000000000208 /* MenuLayout.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000106; };
+		0B0B00000000000000000209 /* AppDisplayLocation.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000107; };
+		0B0B00000000000000000210 /* MenuWishAssets.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000108; };
+		0B0B00000000000000000211 /* MenuWishAssets.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000108; };
+		0B0B00000000000000000212 /* MenuIcons */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000109; };
+		0B0B00000000000000000213 /* MenuIcons */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000109; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +72,15 @@
 		0A0A00000000000000000022 /* RightMenuMiniFinderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RightMenuMiniFinderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0A00000000000000000031 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0A0A00000000000000000032 /* FinderSync.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FinderSync.framework; path = System/Library/Frameworks/FinderSync.framework; sourceTree = SDKROOT; };
+		0B0B00000000000000000101 /* NewFileKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shared/NewFileKind.swift"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000102 /* NewFileCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RightMenuMini/NewFileCreator.swift"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000103 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RightMenuMini/UpdateChecker.swift"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000104 /* Templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "RightMenuMini/Resources/Templates"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000105 /* ReleaseNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightMenuMini/ReleaseNotesView.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000106 /* MenuLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/MenuLayout.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000107 /* AppDisplayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightMenuMini/AppDisplayLocation.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000108 /* MenuWishAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/MenuWishAssets.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000109 /* MenuIcons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shared/MenuIcons; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +111,15 @@
 				0A0A00000000000000000085 /* Scripts */,
 				0A0A00000000000000000086 /* Frameworks */,
 				0A0A00000000000000000082 /* Products */,
+				0B0B00000000000000000101 /* NewFileKind.swift */,
+				0B0B00000000000000000102 /* NewFileCreator.swift */,
+				0B0B00000000000000000103 /* UpdateChecker.swift */,
+				0B0B00000000000000000104 /* Templates */,
+				0B0B00000000000000000105 /* ReleaseNotesView.swift */,
+				0B0B00000000000000000106 /* MenuLayout.swift */,
+				0B0B00000000000000000107 /* AppDisplayLocation.swift */,
+				0B0B00000000000000000108 /* MenuWishAssets.swift */,
+				0B0B00000000000000000109 /* MenuIcons */,
 				0A0A00000000000000000015 /* README.md */,
 				0A0A00000000000000000016 /* .gitignore */,
 			);
@@ -226,6 +257,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0A00000000000000000006 /* Assets.xcassets in Resources */,
+				0B0B00000000000000000204 /* Templates */,
+				0B0B00000000000000000212 /* MenuIcons */,
 				0A0A00000000000000000007 /* InfoPlist.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -235,6 +268,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0A00000000000000000008 /* InfoPlist.strings in Resources */,
+				0B0B00000000000000000213 /* MenuIcons */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +301,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0A00000000000000000001 /* AppDelegate.swift in Sources */,
+				0B0B00000000000000000203 /* UpdateChecker.swift */,
+				0B0B00000000000000000206 /* ReleaseNotesView.swift */,
+				0B0B00000000000000000202 /* NewFileCreator.swift */,
+				0B0B00000000000000000201 /* NewFileKind.swift */,
+				0B0B00000000000000000207 /* MenuLayout.swift */,
+				0B0B00000000000000000209 /* AppDisplayLocation.swift */,
+				0B0B00000000000000000210 /* MenuWishAssets.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +316,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0A00000000000000000002 /* FinderSync.swift in Sources */,
+				0B0B00000000000000000205 /* NewFileKind.swift */,
+				0B0B00000000000000000208 /* MenuLayout.swift */,
+				0B0B00000000000000000211 /* MenuWishAssets.swift */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -409,7 +453,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
@@ -420,7 +464,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini;
 				PRODUCT_NAME = RightMenuMini;
 				SWIFT_VERSION = 6.0;
@@ -434,7 +478,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
@@ -445,7 +489,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini;
 				PRODUCT_NAME = RightMenuMini;
 				SWIFT_VERSION = 6.0;
@@ -460,7 +504,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -470,7 +514,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini.FinderExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -486,7 +530,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 15;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -496,7 +540,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.3;
+				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini.FinderExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

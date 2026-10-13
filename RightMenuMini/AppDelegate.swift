@@ -4,12 +4,12 @@ import Carbon
 private enum RightMenuMiniPreferences {
     static let suiteName = "com.codex.RightMenuMini.shared"
     static let isMenuEnabled = "isMenuEnabled"
-    static let isNewTextEnabled = "isNewTextEnabled"
     static let isTerminalEnabled = "isTerminalEnabled"
     static let isCopyPathEnabled = "isCopyPathEnabled"
     static let isGroupedMenuEnabled = "isGroupedMenuEnabled"
     static let languageMode = "languageMode"
     static let appearanceMode = "appearanceMode"
+    static let collapsedActionCategories = "collapsedActionCategories"
 
     static let systemValue = "system"
     static let chineseValue = "zh-Hans"
@@ -17,16 +17,21 @@ private enum RightMenuMiniPreferences {
     static let lightValue = "light"
     static let darkValue = "dark"
 
-    static let defaultValues: [String: Bool] = [
+    static let defaultValues: [String: Bool] = Dictionary(uniqueKeysWithValues:
+        NewFileKind.allCases.map { ($0.preferenceKey, true) }
+    ).merging([
         isMenuEnabled: true,
-        isNewTextEnabled: true,
         isTerminalEnabled: true,
         isCopyPathEnabled: true,
         isGroupedMenuEnabled: false
-    ]
+    ]) { _, value in value }
     static let stringDefaultValues: [String: String] = [
         languageMode: systemValue,
-        appearanceMode: systemValue
+        appearanceMode: systemValue,
+        AppDisplayLocation.preferenceKey: AppDisplayLocation.menuBar.rawValue,
+        MenuDisplayMode.preferenceKey: "",
+        MenuLayout.preferenceKey: MenuLayout().serialized,
+        collapsedActionCategories: ""
     ]
     static var registeredDefaults: [String: Any] {
         var values: [String: Any] = defaultValues.mapValues { $0 as Any }
@@ -126,109 +131,6 @@ private enum AppText {
     }
 }
 
-private enum MenuWishAssets {
-    // MenuWish 专属标志：原版三颗四角星（纯矢量，支持 Hover 纯白反色与深浅色模式）
-    static let originalSparklesSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="black">
-      <path d="M 8.70 4.75 L 9.82 7.88 L 12.95 9.00 L 9.82 10.12 L 8.70 13.25 L 7.58 10.12 L 4.45 9.00 L 7.58 7.88 Z" />
-      <path d="M 4.15 2.65 L 4.77 4.13 L 6.25 4.75 L 4.77 5.37 L 4.15 6.85 L 3.53 5.37 L 2.05 4.75 L 3.53 4.13 Z" />
-      <path d="M 13.65 11.55 L 14.19 12.81 L 15.45 13.35 L 14.19 13.89 L 13.65 15.15 L 13.11 13.89 L 11.85 13.35 L 13.11 12.81 Z" />
-    </svg>
-    """
-
-    // Phosphor Icons Medium: 适度加粗（+30% 粗度，完美契合 macOS 菜单字重与可读性）
-    static let phosphorFileTextSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="black">
-      <path stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Zm-32-80a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,136Zm0,32a8,8,0,0,1-8,8H96a8,8,0,0,1,0-16h64A8,8,0,0,1,168,168Z"/>
-    </svg>
-    """
-
-    static let phosphorTerminalSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="black">
-      <path stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M128,128a8,8,0,0,1-3,6.25l-40,32a8,8,0,1,1-10-12.5L107.19,128,75,102.25a8,8,0,1,1,10-12.5l40,32A8,8,0,0,1,128,128Zm48,24H136a8,8,0,0,0,0,16h40a8,8,0,0,0,0-16Zm56-96V200a16,16,0,0,1-16,16H40a16,16,0,0,1-16-16V56A16,16,0,0,1,40,40H216A16,16,0,0,1,232,56ZM216,200V56H40V200H216Z"/>
-    </svg>
-    """
-
-    static let phosphorLinkSVG = """
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" fill="black">
-      <path stroke="black" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" d="M240,88.23a54.43,54.43,0,0,1-16,37L189.25,160a54.27,54.27,0,0,1-38.63,16h-.05A54.63,54.63,0,0,1,96,119.84a8,8,0,0,1,16,.45A38.62,38.62,0,0,0,150.58,160h0a38.39,38.39,0,0,0,27.31-11.31l34.75-34.75a38.63,38.63,0,0,0-54.63-54.63l-11,11A8,8,0,0,1,135.7,59l11-11A54.65,54.65,0,0,1,224,48,54.86,54.86,0,0,1,240,88.23ZM109,185.66l-11,11A38.41,38.41,0,0,1,70.6,208h0a38.63,38.63,0,0,1-27.29-65.94L78,107.31A38.63,38.63,0,0,1,144,135.71a8,8,0,0,0,16,.45A54.86,54.86,0,0,0,144,96a54.65,54.65,0,0,0-77.27,0L32,130.75A54.62,54.62,0,0,0,70.56,224h0a54.28,54.28,0,0,0,38.64-16l11-11A8,8,0,0,0,109,185.66Z"/>
-    </svg>
-    """
-
-    nonisolated(unsafe) private static var cache: [String: NSImage] = [:]
-    private static let lock = NSLock()
-
-    static func image(named name: String, size: NSSize = NSSize(width: 16, height: 16)) -> NSImage? {
-        let key = "\(name)_\(Int(size.width))x\(Int(size.height))"
-        lock.lock()
-        if let cached = cache[key] {
-            lock.unlock()
-            return cached
-        }
-        lock.unlock()
-
-        let svgString: String?
-        switch name {
-        case "sparkles", "menuwish-stars":
-            svgString = originalSparklesSVG
-        case "file-text":
-            svgString = phosphorFileTextSVG
-        case "square-terminal", "terminal":
-            svgString = phosphorTerminalSVG
-        case "link":
-            svgString = phosphorLinkSVG
-        default:
-            svgString = nil
-        }
-
-        guard let svg = svgString,
-              let data = svg.data(using: .utf8),
-              let svgImage = NSImage(data: data) else {
-            return nil
-        }
-
-        let rendered = NSImage(size: size)
-        for scale in [1.0, 2.0] {
-            let pxW = Int(size.width * scale)
-            let pxH = Int(size.height * scale)
-            let colorSpace = CGColorSpaceCreateDeviceGray()
-            guard let ctx = CGContext(
-                data: nil,
-                width: pxW,
-                height: pxH,
-                bitsPerComponent: 8,
-                bytesPerRow: pxW * 2,
-                space: colorSpace,
-                bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
-            ) else {
-                continue
-            }
-            ctx.interpolationQuality = .high
-            ctx.setShouldAntialias(true)
-            ctx.scaleBy(x: scale, y: scale)
-
-            let g = NSGraphicsContext(cgContext: ctx, flipped: false)
-            NSGraphicsContext.saveGraphicsState()
-            NSGraphicsContext.current = g
-            svgImage.draw(in: NSRect(origin: .zero, size: size))
-            NSGraphicsContext.restoreGraphicsState()
-
-            if let cgImage = ctx.makeImage() {
-                let rep = NSBitmapImageRep(cgImage: cgImage)
-                rep.size = size
-                rendered.addRepresentation(rep)
-            }
-        }
-
-        rendered.isTemplate = true
-
-        lock.lock()
-        cache[key] = rendered
-        lock.unlock()
-
-        return rendered
-    }
-}
 
 @MainActor
 final class AppDelegate: NSObject, NSApplicationDelegate {
@@ -268,9 +170,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var receivedActionURL = false
     private let preferences = RightMenuMiniPreferences.store()
     private var currentTab: SidebarTab = .general
+    private var reorderSheet: NSWindow?
+    private var draftLayout = MenuLayout()
+    private var previewCategory: MenuCategory = .files
+    private var draftEnabledStates: [MenuAction: Bool] = [:]
+    private var sheetScrollView: NSScrollView?
+    private var sheetStackView: NSStackView?
+    private var sheetResetButton: NSButton?
+    private var collapsedActionCategories: Set<MenuCategory> {
+        get {
+            Set((preferences.string(forKey: RightMenuMiniPreferences.collapsedActionCategories) ?? "")
+                .split(separator: ",").compactMap { MenuCategory(rawValue: String($0)) })
+        }
+        set {
+            preferences.set(newValue.map(\.rawValue).sorted().joined(separator: ","),
+                forKey: RightMenuMiniPreferences.collapsedActionCategories)
+            preferences.synchronize()
+            RightMenuMiniPreferences.mirrorValues(from: preferences)
+        }
+    }
     private var contentContainer: NSView?
     private var sidebarButtons: [SidebarTab: NSButton] = [:]
     private var preferenceSwitches: [String: NSSwitch] = [:]
+    private var preferenceCheckboxes: [String: NSButton] = [:]
     private var preferenceRows: [String: NSView] = [:]
     private var statusDetailLabels: [String: NSTextField] = [:]
     private var sectionTitleLabels: [String: NSTextField] = [:]
@@ -292,13 +214,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var authorizationButton: NSButton?
     private var updateStatusLabel: NSTextField?
     private var updateCheckButton: NSButton?
-    private var updateDownloadAvailable = false
-    private var latestReleasePageURL: URL?
+    private var isCheckingForUpdates = false
+    private var releaseAlert: NSAlert?
+    private var appliedDisplayLocation = AppDisplayLocation.menuBar
     private var versionBadge: NSView?
     private var versionBadgeLabel: NSTextField?
-    private var flatLayoutCard: LayoutOptionCard?
-    private var groupedLayoutCard: LayoutOptionCard?
+    private var layoutSegmentControl: NSSegmentedControl?
+    private var reorderActionsButton: NSButton?
     private var sidebarBrandLabel: NSTextField?
+    private var previewStageView: NSView?
+    private var previewMenuContainer: NSView?
+    private var previewModeLabel: NSTextField?
+    private var previewModePill: NSView?
 
     func applicationWillFinishLaunching(_ notification: Notification) {
         NSAppleEventManager.shared().setEventHandler(
@@ -317,7 +244,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let bundledIcon = bundledApplicationIconImage() {
             NSApp.applicationIconImage = bundledIcon
         }
-        configureStatusItem()
+        applyDisplayLocation()
+
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             guard let self, !self.receivedActionURL else {
@@ -418,10 +346,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             separator.bottomAnchor.constraint(equalTo: visualView.bottomAnchor),
             separator.widthAnchor.constraint(equalToConstant: 1),
 
-            content.leadingAnchor.constraint(equalTo: separator.trailingAnchor, constant: 30),
-            content.trailingAnchor.constraint(equalTo: visualView.trailingAnchor, constant: -30),
-            content.topAnchor.constraint(equalTo: visualView.topAnchor, constant: 30),
-            content.bottomAnchor.constraint(equalTo: visualView.bottomAnchor, constant: -26)
+            content.leadingAnchor.constraint(equalTo: separator.trailingAnchor),
+            content.trailingAnchor.constraint(equalTo: visualView.trailingAnchor),
+            content.topAnchor.constraint(equalTo: visualView.topAnchor),
+            content.bottomAnchor.constraint(equalTo: visualView.bottomAnchor)
         ])
 
         self.window = window
@@ -431,6 +359,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func configureStatusItem() {
+        guard displayLocation.showsMenuBar else {
+            if let statusItem { NSStatusBar.system.removeStatusItem(statusItem) }
+            statusItem = nil
+            statusMenuAuthorizationItem = nil
+            return
+        }
         let statusItem = self.statusItem ?? NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         statusItem.button?.image = MenuWishAssets.image(named: "sparkles", size: NSSize(width: 18, height: 18))
         statusItem.button?.image?.isTemplate = true
@@ -461,6 +395,79 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         refreshAuthorizationStatus()
     }
 
+    private var displayLocation: AppDisplayLocation {
+        AppDisplayLocation.resolved(preferences.string(forKey: AppDisplayLocation.preferenceKey))
+    }
+
+    private var displayLocationItems: [(value: String, title: String)] {
+        AppDisplayLocation.allCases.map { ($0.rawValue, $0.title(isEnglish: AppText.isEnglish)) }
+    }
+
+    private func applyDisplayLocation() {
+        let location = displayLocation
+        let policy: NSApplication.ActivationPolicy = location.showsDock ? .regular : .accessory
+        // Create the menu-bar entry before hiding Dock; show Dock before removing
+        // the menu-bar entry. There is always a reachable settings entry point.
+        if location.showsMenuBar { configureStatusItem() }
+        if NSApp.activationPolicy() != policy && !NSApp.setActivationPolicy(policy) {
+            preferences.set(appliedDisplayLocation.rawValue, forKey: AppDisplayLocation.preferenceKey)
+            preferences.synchronize()
+            RightMenuMiniPreferences.mirrorValues(from: preferences)
+            configureStatusItem()
+            updatePopup(AppDisplayLocation.preferenceKey, items: displayLocationItems)
+            showNativeAlert(title: AppText.localized("无法更改应用入口", "Unable to Change App Access"),
+                message: AppText.localized("已保留原来的应用入口设置，请稍后再试。", "Your previous app access setting has been kept. Please try again later."), style: .warning)
+            return
+        }
+        appliedDisplayLocation = location
+        configureApplicationMenu()
+        configureStatusItem()
+        if window?.isVisible == true {
+            DispatchQueue.main.async { [weak self] in
+                self?.window?.makeKeyAndOrderFront(nil)
+                NSApp.activate(ignoringOtherApps: true)
+            }
+        }
+    }
+
+    private func configureApplicationMenu() {
+        let main = NSMenu()
+        let appItem = NSMenuItem()
+        let appMenu = NSMenu(title: "MenuWish")
+        func add(_ title: String, action: Selector, key: String, target: AnyObject? = nil) -> NSMenuItem {
+            let item = NSMenuItem(title: title, action: action, keyEquivalent: key)
+            item.target = target
+            appMenu.addItem(item)
+            return item
+        }
+        _ = add(AppText.localized("MenuWish 设置…", "MenuWish Settings…"), action: #selector(showMainWindow), key: ",", target: self)
+        appMenu.addItem(.separator())
+        _ = add(AppText.localized("隐藏 MenuWish", "Hide MenuWish"), action: #selector(NSApplication.hide(_:)), key: "h", target: NSApp)
+        let hideOthers = add(AppText.localized("隐藏其他", "Hide Others"), action: #selector(NSApplication.hideOtherApplications(_:)), key: "h", target: NSApp)
+        hideOthers.keyEquivalentModifierMask = [.command, .option]
+        _ = add(AppText.localized("全部显示", "Show All"), action: #selector(NSApplication.unhideAllApplications(_:)), key: "", target: NSApp)
+        appMenu.addItem(.separator())
+        _ = add(AppText.localized("退出 MenuWish", "Quit MenuWish"), action: #selector(quitApp), key: "q", target: self)
+        appItem.submenu = appMenu
+        main.addItem(appItem)
+
+        let editItem = NSMenuItem()
+        let edit = NSMenu(title: AppText.localized("编辑", "Edit"))
+        edit.addItem(withTitle: AppText.localized("拷贝", "Copy"), action: #selector(NSText.copy(_:)), keyEquivalent: "c")
+        edit.addItem(withTitle: AppText.localized("全选", "Select All"), action: #selector(NSText.selectAll(_:)), keyEquivalent: "a")
+        editItem.submenu = edit
+        main.addItem(editItem)
+
+        let windowItem = NSMenuItem()
+        let windows = NSMenu(title: AppText.localized("窗口", "Window"))
+        windows.addItem(withTitle: AppText.localized("最小化", "Minimize"), action: #selector(NSWindow.performMiniaturize(_:)), keyEquivalent: "m")
+        windows.addItem(withTitle: AppText.localized("关闭", "Close"), action: #selector(NSWindow.performClose(_:)), keyEquivalent: "w")
+        windowItem.submenu = windows
+        main.addItem(windowItem)
+        NSApp.mainMenu = main
+        NSApp.windowsMenu = windows
+    }
+
     @objc private func showMainWindow() {
         showWindow()
     }
@@ -487,6 +494,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         contentContainer.subviews.forEach { $0.removeFromSuperview() }
         preferenceSwitches.removeAll()
+        preferenceCheckboxes.removeAll()
         preferenceRows.removeAll()
         statusDetailLabels.removeAll()
         sectionTitleLabels.removeAll()
@@ -509,8 +517,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         updateCheckButton = nil
         versionBadge = nil
         versionBadgeLabel = nil
-        flatLayoutCard = nil
-        groupedLayoutCard = nil
+        layoutSegmentControl = nil
+        reorderActionsButton = nil
+        previewStageView = nil
+        previewMenuContainer = nil
+        previewModeLabel = nil
+        previewModePill = nil
 
         let content: NSView
         switch tab {
@@ -521,15 +533,36 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         content.translatesAutoresizingMaskIntoConstraints = false
-        contentContainer.addSubview(content)
+        let scrollView = NSScrollView()
+        scrollView.hasVerticalScroller = true
+        scrollView.autohidesScrollers = true
+        scrollView.scrollerStyle = .overlay
+        scrollView.drawsBackground = false
+        scrollView.automaticallyAdjustsContentInsets = false
+        scrollView.translatesAutoresizingMaskIntoConstraints = false
+        let document = FlippedDocumentView()
+        document.translatesAutoresizingMaskIntoConstraints = false
+        document.addSubview(content)
+        scrollView.documentView = document
+        contentContainer.addSubview(scrollView)
         NSLayoutConstraint.activate([
-            content.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
-            content.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
-            content.topAnchor.constraint(equalTo: contentContainer.topAnchor),
-            content.bottomAnchor.constraint(lessThanOrEqualTo: contentContainer.bottomAnchor)
+            scrollView.leadingAnchor.constraint(equalTo: contentContainer.leadingAnchor),
+            scrollView.trailingAnchor.constraint(equalTo: contentContainer.trailingAnchor),
+            scrollView.topAnchor.constraint(equalTo: contentContainer.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: contentContainer.bottomAnchor),
+            document.topAnchor.constraint(equalTo: scrollView.contentView.topAnchor),
+            document.leadingAnchor.constraint(equalTo: scrollView.contentView.leadingAnchor),
+            document.trailingAnchor.constraint(equalTo: scrollView.contentView.trailingAnchor),
+            content.topAnchor.constraint(equalTo: document.topAnchor, constant: 30),
+            content.centerXAnchor.constraint(equalTo: document.centerXAnchor),
+            content.widthAnchor.constraint(equalToConstant: contentWidth),
+            document.bottomAnchor.constraint(equalTo: content.bottomAnchor, constant: 30)
         ])
 
         applyAuthorizationStatus(finderExtensionEnabled)
+        contentContainer.layoutSubtreeIfNeeded()
+        scrollView.contentView.scroll(to: .zero)
+        scrollView.reflectScrolledClipView(scrollView.contentView)
     }
 
     private func refreshSidebarSelectionAppearance() {
@@ -696,7 +729,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         let appearanceRow = settingsPopUpRow(
             symbol: "circle.lefthalf.filled",
-            title: AppText.localized("显示模式", "Display Mode"),
+            title: AppText.localized("外观", "Appearance"),
             detail: AppText.localized("选择浅色、深色或跟随系统", "Choose light, dark, or system appearance"),
             key: RightMenuMiniPreferences.appearanceMode,
             items: [
@@ -706,9 +739,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             ],
             action: #selector(appearanceSelectionChanged(_:))
         )
+        let locationRow = settingsPopUpRow(
+            symbol: "dock.rectangle",
+            title: AppText.localized("应用入口", "App Access"),
+            detail: AppText.localized("选择在菜单栏或 Dock 中显示 MenuWish", "Show MenuWish in the menu bar or Dock"),
+            key: AppDisplayLocation.preferenceKey,
+            items: displayLocationItems,
+            controlWidth: 150,
+            action: #selector(displayLocationSelectionChanged(_:))
+        )
         let preferencesPanel = settingsPanel(rows: [
-            languageRow,
-            appearanceRow
+            locationRow,
+            appearanceRow,
+            languageRow
         ])
 
         let versionRow = settingsVersionRow(
@@ -721,6 +764,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         )
         updateStatusLabel = versionRow.detailLabel
         updateCheckButton = versionRow.button
+        refreshUpdateControls()
 
         let githubRow = settingsButtonRow(
             symbol: "github",
@@ -762,78 +806,696 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func actionsContentView() -> NSView {
-        let layoutSection = sectionTitle(AppText.localized("菜单布局", "Menu Layout"), key: "section.layout")
-
-        let flatCard = LayoutOptionCard(
-            symbol: "list.bullet",
-            title: AppText.localized("平铺显示", "Flat Layout"),
-            detail: AppText.localized("直接显示三项功能", "Show actions directly")
-        )
-        flatCard.target = self
-        flatCard.action = #selector(flatLayoutSelected(_:))
-        self.flatLayoutCard = flatCard
-
-        let groupedCard = LayoutOptionCard(
-            symbol: "rectangle.stack",
-            title: AppText.localized("折叠显示", "Grouped Layout"),
-            detail: AppText.localized("三项功能集合显示", "Show actions in a submenu")
-        )
-        groupedCard.target = self
-        groupedCard.action = #selector(groupedLayoutSelected(_:))
-        self.groupedLayoutCard = groupedCard
-
-        let layoutStack = NSStackView(views: [flatCard, groupedCard])
-        layoutStack.orientation = .horizontal
-        layoutStack.distribution = .fillEqually
-        layoutStack.spacing = 12
-        layoutStack.translatesAutoresizingMaskIntoConstraints = false
-
-        let featuresSection = sectionTitle(AppText.localized("快捷功能", "Quick Actions"), key: "section.features")
-
-        let rows = [
-            preferenceRow(
-                symbol: "file-text",
-                title: AppText.localized("新建 Text", "New Text"),
-                detail: AppText.localized("在当前位置创建 Untitled.txt", "Create Untitled.txt here"),
-                key: RightMenuMiniPreferences.isNewTextEnabled
-            ),
-            preferenceRow(
-                symbol: "square-terminal",
-                title: AppText.localized("进入终端", "Open Terminal"),
-                detail: AppText.localized("从当前位置打开 Terminal", "Open Terminal at this location"),
-                key: RightMenuMiniPreferences.isTerminalEnabled
-            ),
-            preferenceRow(
-                symbol: "link",
-                title: AppText.localized("拷贝路径", "Copy Path"),
-                detail: AppText.localized("复制所选项目或当前文件夹路径", "Copy selected paths or current folder"),
-                key: RightMenuMiniPreferences.isCopyPathEnabled
-            )
-        ]
-
-        let featuresPanel = settingsPanel(rows: rows)
-
-        let stack = NSStackView(views: [
-            layoutSection,
-            layoutStack,
-            featuresSection,
-            featuresPanel
-        ])
+        let layoutCard = menuLayoutAndPreviewCard()
+        let stack = NSStackView(views: [layoutCard])
         stack.orientation = .vertical
         stack.alignment = .width
         stack.spacing = 0
-        stack.setCustomSpacing(10, after: layoutSection)
-        stack.setCustomSpacing(24, after: layoutStack)
-        stack.setCustomSpacing(10, after: featuresSection)
+        stack.setCustomSpacing(22, after: layoutCard)
         stack.translatesAutoresizingMaskIntoConstraints = false
 
+        stack.addArrangedSubview(menuActionsCard())
         NSLayoutConstraint.activate([
-            stack.widthAnchor.constraint(equalToConstant: contentWidth),
-            layoutStack.widthAnchor.constraint(equalToConstant: contentWidth),
-            layoutStack.heightAnchor.constraint(equalToConstant: 72)
+            stack.widthAnchor.constraint(equalToConstant: contentWidth)
+        ])
+        return stack
+    }
+
+    private func menuActionsCard() -> NSView {
+        let header = NSView()
+        header.translatesAutoresizingMaskIntoConstraints = false
+
+        let title = NSTextField(labelWithString: AppText.localized("菜单功能", "Menu Actions"))
+        title.font = .systemFont(ofSize: 14, weight: .semibold)
+        title.textColor = .labelColor
+        title.translatesAutoresizingMaskIntoConstraints = false
+
+        let reorderButton = NSButton(
+            title: AppText.localized("调整顺序…", "Reorder Actions…"),
+            target: self,
+            action: #selector(openReorderSheet(_:))
+        )
+        reorderButton.bezelStyle = .rounded
+        reorderButton.isBordered = false
+        reorderButton.contentTintColor = .controlAccentColor
+        reorderButton.font = .systemFont(ofSize: 12, weight: .medium)
+        reorderButton.controlSize = .regular
+        reorderButton.translatesAutoresizingMaskIntoConstraints = false
+        reorderButton.image = NSImage(systemSymbolName: "arrow.up.arrow.down", accessibilityDescription: nil)
+        reorderButton.imagePosition = .imageLeading
+        self.reorderActionsButton = reorderButton
+
+        header.addSubview(title)
+        header.addSubview(reorderButton)
+        NSLayoutConstraint.activate([
+            header.heightAnchor.constraint(equalToConstant: 52),
+            title.leadingAnchor.constraint(equalTo: header.leadingAnchor, constant: 20),
+            title.centerYAnchor.constraint(equalTo: header.centerYAnchor),
+            title.trailingAnchor.constraint(lessThanOrEqualTo: reorderButton.leadingAnchor, constant: -12),
+            reorderButton.trailingAnchor.constraint(equalTo: header.trailingAnchor, constant: -20),
+            reorderButton.centerYAnchor.constraint(equalTo: header.centerYAnchor)
         ])
 
-        return stack
+        let list = NSStackView(views: [header])
+        list.orientation = .vertical
+        list.alignment = .width
+        list.spacing = 0
+        list.translatesAutoresizingMaskIntoConstraints = false
+
+        let layout = actionLayout
+        for (categoryIndex, category) in layout.categories.enumerated() {
+            if categoryIndex > 0 {
+                if let previousRow = list.arrangedSubviews.last {
+                    list.setCustomSpacing(20, after: previousRow)
+                }
+            }
+            list.addArrangedSubview(categoryHeader(category.title(isEnglish: AppText.isEnglish)))
+            for action in layout.orderedActions(in: category) {
+                list.addArrangedSubview(preferenceRow(
+                    symbol: action.symbolName,
+                    title: action.title(isEnglish: AppText.isEnglish),
+                    detail: action.detail(isEnglish: AppText.isEnglish),
+                    key: action.preferenceKey,
+                    isCompact: true
+                ))
+            }
+        }
+
+        let card = plainCard(height: nil, cornerRadius: 16, fixedWidth: contentWidth)
+        card.layer?.borderWidth = 0
+        card.addSubview(list)
+        NSLayoutConstraint.activate([
+            list.leadingAnchor.constraint(equalTo: card.leadingAnchor),
+            list.trailingAnchor.constraint(equalTo: card.trailingAnchor),
+            list.topAnchor.constraint(equalTo: card.topAnchor),
+            list.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -16)
+        ])
+        return card
+    }
+
+    private var menuDisplayMode: MenuDisplayMode {
+        MenuDisplayMode.resolved(RightMenuMiniPreferences.string(MenuDisplayMode.preferenceKey, in: preferences),
+            legacyGrouped: preferenceValue(for: RightMenuMiniPreferences.isGroupedMenuEnabled))
+    }
+
+    private var actionLayout: MenuLayout {
+        MenuLayout(serialized: RightMenuMiniPreferences.string(MenuLayout.preferenceKey, in: preferences))
+    }
+
+    // MARK: - Reorder Modal Sheet
+
+    @objc private func openReorderSheet(_ sender: Any?) {
+        guard let window = self.window else { return }
+        draftLayout = actionLayout
+        var initialEnabled: [MenuAction: Bool] = [:]
+        for action in MenuAction.allCases {
+            initialEnabled[action] = preferenceValue(for: action.preferenceKey)
+        }
+        draftEnabledStates = initialEnabled
+
+        let sheetWidth: CGFloat = 480
+        let sheetHeight: CGFloat = 500
+
+        let sheet = NSWindow(
+            contentRect: NSRect(x: 0, y: 0, width: sheetWidth, height: sheetHeight),
+            styleMask: [.titled],
+            backing: .buffered,
+            defer: false
+        )
+        sheet.appearance = window.appearance
+
+        let visualView = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: sheetWidth, height: sheetHeight))
+        visualView.material = .sheet
+        visualView.blendingMode = .behindWindow
+        visualView.state = .active
+        visualView.translatesAutoresizingMaskIntoConstraints = false
+        sheet.contentView = visualView
+
+        let iconView = NSImageView()
+        iconView.image = NSImage(systemSymbolName: "arrow.up.arrow.down.circle.fill", accessibilityDescription: nil)
+        iconView.symbolConfiguration = .init(pointSize: 30, weight: .medium)
+        iconView.contentTintColor = .controlAccentColor
+        iconView.translatesAutoresizingMaskIntoConstraints = false
+
+        let titleLabel = NSTextField(labelWithString: AppText.localized("调整快捷功能顺序", "Reorder Quick Actions"))
+        titleLabel.font = .systemFont(ofSize: 15.5, weight: .bold)
+        titleLabel.textColor = .labelColor
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let subtitleLabel = NSTextField(labelWithString: menuDisplayMode == .categorized
+            ? AppText.localized("拖动类目标题排序，使用箭头调整功能顺序", "Drag category headers; use arrows to reorder actions")
+            : AppText.localized("上下移动功能项以调整在访达（Finder）右键菜单中的显示顺序", "Adjust order of items in the Finder context menu"))
+        subtitleLabel.font = .systemFont(ofSize: 12)
+        subtitleLabel.textColor = .secondaryLabelColor
+        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let headerTextStack = NSStackView(views: [titleLabel, subtitleLabel])
+        headerTextStack.orientation = .vertical
+        headerTextStack.alignment = .leading
+        headerTextStack.spacing = 3
+        headerTextStack.translatesAutoresizingMaskIntoConstraints = false
+
+        let headerStack = NSStackView(views: [iconView, headerTextStack])
+        headerStack.orientation = .horizontal
+        headerStack.alignment = .centerY
+        headerStack.spacing = 14
+        headerStack.translatesAutoresizingMaskIntoConstraints = false
+        visualView.addSubview(headerStack)
+
+        let scroll = NSScrollView()
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.hasVerticalScroller = true
+        scroll.autohidesScrollers = true
+        scroll.drawsBackground = true
+        scroll.backgroundColor = usesDarkAppearance
+            ? NSColor(white: 0.12, alpha: 0.9)
+            : NSColor(white: 0.98, alpha: 0.95)
+        scroll.wantsLayer = true
+        scroll.layer?.cornerRadius = 10
+        scroll.layer?.borderWidth = 0.5
+        scroll.layer?.borderColor = usesDarkAppearance
+            ? NSColor.white.withAlphaComponent(0.12).cgColor
+            : NSColor.black.withAlphaComponent(0.1).cgColor
+        scroll.automaticallyAdjustsContentInsets = false
+
+        let docView = CategoryReorderDocumentView()
+        docView.translatesAutoresizingMaskIntoConstraints = false
+        docView.onMove = { [weak self] category, index in
+            self?.moveSheetCategory(category, to: index)
+        }
+
+        let listStack = NSStackView()
+        listStack.translatesAutoresizingMaskIntoConstraints = false
+        listStack.orientation = .vertical
+        listStack.alignment = .width
+        listStack.spacing = 0
+
+        docView.addSubview(listStack)
+        scroll.documentView = docView
+        visualView.addSubview(scroll)
+
+        self.sheetScrollView = scroll
+        self.sheetStackView = listStack
+
+        let resetBtn = NSButton(
+            title: AppText.localized("恢复默认", "Reset to Default"),
+            target: self,
+            action: #selector(sheetResetOrderClicked(_:))
+        )
+        resetBtn.bezelStyle = .rounded
+        resetBtn.controlSize = .regular
+        resetBtn.translatesAutoresizingMaskIntoConstraints = false
+        self.sheetResetButton = resetBtn
+
+        let cancelBtn = NSButton(
+            title: AppText.localized("取消", "Cancel"),
+            target: self,
+            action: #selector(sheetCancelClicked(_:))
+        )
+        cancelBtn.bezelStyle = .rounded
+        cancelBtn.controlSize = .regular
+        cancelBtn.keyEquivalent = "\u{1b}"
+        cancelBtn.translatesAutoresizingMaskIntoConstraints = false
+
+        let doneBtn = NSButton(
+            title: AppText.localized("完成", "Done"),
+            target: self,
+            action: #selector(sheetDoneClicked(_:))
+        )
+        doneBtn.bezelStyle = .rounded
+        doneBtn.controlSize = .regular
+        doneBtn.keyEquivalent = "\r"
+        doneBtn.translatesAutoresizingMaskIntoConstraints = false
+        doneBtn.contentTintColor = .controlAccentColor
+        sheet.initialFirstResponder = doneBtn
+
+        let buttonGroup = NSStackView(views: [cancelBtn, doneBtn])
+        buttonGroup.orientation = .horizontal
+        buttonGroup.spacing = 10
+        buttonGroup.translatesAutoresizingMaskIntoConstraints = false
+
+        let footer = NSView()
+        footer.translatesAutoresizingMaskIntoConstraints = false
+        footer.addSubview(resetBtn)
+        footer.addSubview(buttonGroup)
+        visualView.addSubview(footer)
+
+        NSLayoutConstraint.activate([
+            headerStack.topAnchor.constraint(equalTo: visualView.topAnchor, constant: 20),
+            headerStack.leadingAnchor.constraint(equalTo: visualView.leadingAnchor, constant: 24),
+            headerStack.trailingAnchor.constraint(lessThanOrEqualTo: visualView.trailingAnchor, constant: -24),
+
+            scroll.topAnchor.constraint(equalTo: headerStack.bottomAnchor, constant: 16),
+            scroll.leadingAnchor.constraint(equalTo: visualView.leadingAnchor, constant: 24),
+            scroll.trailingAnchor.constraint(equalTo: visualView.trailingAnchor, constant: -24),
+            scroll.bottomAnchor.constraint(equalTo: footer.topAnchor, constant: -16),
+
+            listStack.topAnchor.constraint(equalTo: docView.topAnchor),
+            listStack.leadingAnchor.constraint(equalTo: docView.leadingAnchor),
+            listStack.trailingAnchor.constraint(equalTo: docView.trailingAnchor),
+            docView.bottomAnchor.constraint(equalTo: listStack.bottomAnchor),
+            docView.topAnchor.constraint(equalTo: scroll.contentView.topAnchor),
+            docView.leadingAnchor.constraint(equalTo: scroll.contentView.leadingAnchor),
+            docView.trailingAnchor.constraint(equalTo: scroll.contentView.trailingAnchor),
+
+            footer.leadingAnchor.constraint(equalTo: visualView.leadingAnchor, constant: 24),
+            footer.trailingAnchor.constraint(equalTo: visualView.trailingAnchor, constant: -24),
+            footer.bottomAnchor.constraint(equalTo: visualView.bottomAnchor, constant: -18),
+            footer.heightAnchor.constraint(equalToConstant: 32),
+
+            resetBtn.leadingAnchor.constraint(equalTo: footer.leadingAnchor),
+            resetBtn.centerYAnchor.constraint(equalTo: footer.centerYAnchor),
+            buttonGroup.trailingAnchor.constraint(equalTo: footer.trailingAnchor),
+            buttonGroup.centerYAnchor.constraint(equalTo: footer.centerYAnchor)
+        ])
+
+        renderSheetList()
+
+        self.reorderSheet = sheet
+        window.beginSheet(sheet) { [weak self] _ in
+            (self?.sheetScrollView?.documentView as? CategoryReorderDocumentView)?.cancelDrag()
+            self?.reorderSheet = nil
+            self?.sheetScrollView = nil
+            self?.sheetStackView = nil
+            self?.sheetResetButton = nil
+            self?.draftEnabledStates.removeAll()
+        }
+    }
+
+    private func renderSheetList() {
+        guard let stack = sheetStackView, let scroll = sheetScrollView else { return }
+        let origin = scroll.contentView.bounds.origin
+        stack.subviews.forEach { $0.removeFromSuperview() }
+
+        let defaultLayout = MenuLayout()
+        let isLayoutDefault = draftLayout == defaultLayout
+        let isEnabledDefault = MenuAction.allCases.allSatisfy { action in
+            draftEnabledStates[action] == true
+        }
+        sheetResetButton?.isEnabled = !(isLayoutDefault && isEnabledDefault)
+
+        let groups: [[MenuAction]] = menuDisplayMode == .categorized
+            ? draftLayout.categories.map { draftLayout.orderedActions(in: $0) }
+            : [draftLayout.unifiedActions]
+        let document = scroll.documentView as? CategoryReorderDocumentView
+        document?.cancelDrag()
+        document?.groups = []
+        for actions in groups {
+            let content: NSStackView
+            if menuDisplayMode == .categorized, let category = actions.first?.category {
+                let group = NSStackView()
+                group.orientation = .vertical
+                group.alignment = .width
+                group.spacing = 0
+                group.translatesAutoresizingMaskIntoConstraints = false
+                let header = sheetCategoryRow(category)
+                header.groupView = group
+                group.addArrangedSubview(header)
+                stack.addArrangedSubview(group)
+                group.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
+                document?.groups.append((category, group))
+                content = group
+            } else {
+                content = stack
+            }
+            for (index, action) in actions.enumerated() {
+                content.addArrangedSubview(sheetActionRow(action: action, index: index, count: actions.count))
+                if index < actions.count - 1 { content.addArrangedSubview(sheetDivider()) }
+            }
+        }
+
+        stack.layoutSubtreeIfNeeded()
+        var bounds = scroll.contentView.bounds
+        bounds.origin = origin
+        scroll.contentView.scroll(to: scroll.contentView.constrainBoundsRect(bounds).origin)
+        scroll.reflectScrolledClipView(scroll.contentView)
+    }
+
+    private func sheetCategoryRow(_ category: MenuCategory) -> CategoryDragHeaderView {
+        let row = CategoryDragHeaderView(category: category)
+        row.translatesAutoresizingMaskIntoConstraints = false
+        let title = category.title(isEnglish: AppText.isEnglish)
+        row.setAccessibilityLabel(title)
+        row.toolTip = AppText.localized("拖动整个类目排序；聚焦后也可按 Option + ↑ / ↓", "Drag to reorder; when focused, press Option + ↑ / ↓")
+        row.onKeyboardMove = { [weak self] offset in
+            guard let self, let index = self.draftLayout.categories.firstIndex(of: category) else { return false }
+            return self.moveSheetCategory(category, to: index + offset)
+        }
+        row.setAccessibilityCustomActions([
+            NSAccessibilityCustomAction(name: AppText.localized("上移类目", "Move category up"), handler: { [weak row] in row?.onKeyboardMove?(-1) ?? false }),
+            NSAccessibilityCustomAction(name: AppText.localized("下移类目", "Move category down"), handler: { [weak row] in row?.onKeyboardMove?(1) ?? false })
+        ])
+        let grip = NSImageView()
+        grip.image = NSImage(systemSymbolName: "line.3.horizontal", accessibilityDescription: nil)
+        grip.contentTintColor = .tertiaryLabelColor
+        grip.translatesAutoresizingMaskIntoConstraints = false
+        let label = NSTextField(labelWithString: title)
+        label.font = .systemFont(ofSize: 12, weight: .semibold)
+        label.textColor = .secondaryLabelColor
+        label.translatesAutoresizingMaskIntoConstraints = false
+        row.addSubview(grip)
+        row.addSubview(label)
+        NSLayoutConstraint.activate([
+            row.heightAnchor.constraint(equalToConstant: 36),
+            grip.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 16),
+            grip.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            grip.widthAnchor.constraint(equalToConstant: 12),
+            grip.heightAnchor.constraint(equalToConstant: 12),
+            label.leadingAnchor.constraint(equalTo: grip.trailingAnchor, constant: 8),
+            label.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            label.trailingAnchor.constraint(lessThanOrEqualTo: row.trailingAnchor, constant: -16)
+        ])
+        return row
+    }
+
+    @discardableResult private func moveSheetCategory(_ category: MenuCategory, to index: Int) -> Bool {
+        guard draftLayout.moveCategory(category, to: index) else { return false }
+        let focusStyle = (reorderSheet?.firstResponder as? CategoryDragHeaderView)?.focusRingType ?? .exterior
+        renderSheetList()
+        if let document = sheetScrollView?.documentView as? CategoryReorderDocumentView,
+           let group = document.groups.first(where: { $0.category == category })?.view,
+           let header = group.subviews.first as? CategoryDragHeaderView {
+            document.scrollToVisible(document.convert(header.bounds, from: header))
+            reorderSheet?.makeFirstResponder(header)
+            header.focusRingType = focusStyle
+        }
+        return true
+    }
+
+    private func sheetActionRow(action: MenuAction, index: Int, count: Int) -> NSView {
+        let row = NSView()
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        let isActionEnabled = draftEnabledStates[action] ?? true
+
+        let checkbox = NSButton(checkboxWithTitle: "", target: self, action: #selector(sheetActionCheckboxToggled(_:)))
+        checkbox.state = isActionEnabled ? .on : .off
+        checkbox.identifier = NSUserInterfaceItemIdentifier("chk:\(action.rawValue)")
+        checkbox.translatesAutoresizingMaskIntoConstraints = false
+        checkbox.setAccessibilityLabel(action.title(isEnglish: AppText.isEnglish))
+
+        let color = iconColor(forSymbol: action.symbolName)
+        let tile = NSView()
+        tile.translatesAutoresizingMaskIntoConstraints = false
+        tile.wantsLayer = true
+        tile.layer?.cornerRadius = 8
+        tile.layer?.backgroundColor = tintBackgroundColor(for: color).cgColor
+        tile.alphaValue = isActionEnabled ? 1.0 : 0.45
+
+        let icon = NSImageView()
+        if let iconImage = MenuWishAssets.image(named: action.symbolName, size: NSSize(width: 18, height: 18)) {
+            icon.image = iconImage
+        } else {
+            icon.image = NSImage(systemSymbolName: action.symbolName, accessibilityDescription: nil)
+            icon.symbolConfiguration = .init(pointSize: 18, weight: .semibold)
+        }
+        icon.contentTintColor = color
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        tile.addSubview(icon)
+
+        let titleLabel = NSTextField(labelWithString: action.title(isEnglish: AppText.isEnglish))
+        titleLabel.font = .systemFont(ofSize: 13.5, weight: .semibold)
+        titleLabel.textColor = isActionEnabled ? .labelColor : .secondaryLabelColor
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let upImage = NSImage(systemSymbolName: "chevron.up", accessibilityDescription: AppText.localized("上移", "Move Up"))?
+            .withSymbolConfiguration(.init(pointSize: 10, weight: .bold)) ?? NSImage()
+        let downImage = NSImage(systemSymbolName: "chevron.down", accessibilityDescription: AppText.localized("下移", "Move Down"))?
+            .withSymbolConfiguration(.init(pointSize: 10, weight: .bold)) ?? NSImage()
+
+        let seg = NSSegmentedControl(
+            images: [upImage, downImage],
+            trackingMode: .momentary,
+            target: self,
+            action: #selector(sheetActionSegmentClicked(_:))
+        )
+        seg.controlSize = .regular
+        seg.segmentStyle = .separated
+        seg.identifier = NSUserInterfaceItemIdentifier("act:\(action.rawValue)")
+        seg.setEnabled(index > 0, forSegment: 0)
+        seg.setEnabled(index < count - 1, forSegment: 1)
+        seg.translatesAutoresizingMaskIntoConstraints = false
+
+        row.addSubview(checkbox)
+        row.addSubview(tile)
+        row.addSubview(titleLabel)
+        row.addSubview(seg)
+
+        NSLayoutConstraint.activate([
+            row.heightAnchor.constraint(equalToConstant: 48),
+
+            checkbox.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 16),
+            checkbox.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+
+            tile.leadingAnchor.constraint(equalTo: checkbox.trailingAnchor, constant: 10),
+            tile.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            tile.widthAnchor.constraint(equalToConstant: 32),
+            tile.heightAnchor.constraint(equalToConstant: 32),
+
+            icon.centerXAnchor.constraint(equalTo: tile.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: tile.centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 18),
+            icon.heightAnchor.constraint(equalToConstant: 18),
+
+            titleLabel.leadingAnchor.constraint(equalTo: tile.trailingAnchor, constant: 12),
+            titleLabel.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: seg.leadingAnchor, constant: -14),
+
+            seg.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -18),
+            seg.centerYAnchor.constraint(equalTo: row.centerYAnchor)
+        ])
+
+        return row
+    }
+
+    private func sheetDivider() -> NSView {
+        let div = NSView()
+        div.translatesAutoresizingMaskIntoConstraints = false
+        div.wantsLayer = true
+        div.layer?.backgroundColor = usesDarkAppearance
+            ? NSColor.white.withAlphaComponent(0.06).cgColor
+            : NSColor.black.withAlphaComponent(0.06).cgColor
+        div.heightAnchor.constraint(equalToConstant: 0.5).isActive = true
+        return div
+    }
+
+    @objc private func sheetActionCheckboxToggled(_ sender: NSButton) {
+        guard let id = sender.identifier?.rawValue, id.hasPrefix("chk:"),
+              let action = MenuAction(rawValue: String(id.dropFirst(4))) else { return }
+        draftEnabledStates[action] = (sender.state == .on)
+        renderSheetList()
+    }
+
+    @objc private func sheetActionSegmentClicked(_ sender: NSSegmentedControl) {
+        guard let id = sender.identifier?.rawValue, id.hasPrefix("act:"),
+              let action = MenuAction(rawValue: String(id.dropFirst(4))) else { return }
+        let offset = sender.selectedSegment == 0 ? -1 : 1
+        let moved = menuDisplayMode == .categorized
+            ? draftLayout.moveWithinCategory(action, by: offset)
+            : draftLayout.moveUnified(action, by: offset)
+        if moved { renderSheetList() }
+    }
+
+    @objc private func sheetResetOrderClicked(_ sender: NSButton) {
+        draftLayout = MenuLayout()
+        for action in MenuAction.allCases {
+            draftEnabledStates[action] = true
+        }
+        renderSheetList()
+    }
+
+    @objc private func sheetCancelClicked(_ sender: NSButton) {
+        guard let sheet = reorderSheet, let window = self.window else { return }
+        window.endSheet(sheet, returnCode: .cancel)
+    }
+
+    @objc private func sheetDoneClicked(_ sender: NSButton) {
+        guard let sheet = reorderSheet, let window = self.window else { return }
+        saveActionLayout(draftLayout)
+        for (action, enabled) in draftEnabledStates {
+            preferences.set(enabled, forKey: action.preferenceKey)
+        }
+        preferences.synchronize()
+        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        refreshPreferenceControls()
+        reloadActionsPreservingScroll()
+        window.endSheet(sheet, returnCode: .OK)
+    }
+
+    private func settingsSegmentRow(
+        symbol: String,
+        title: String,
+        detail: String,
+        segments: [String],
+        selected: Int,
+        action: Selector
+    ) -> (row: NSView, control: NSSegmentedControl) {
+        let row = NSView()
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        let color = iconColor(forSymbol: symbol)
+        let iconTile = NSView()
+        iconTile.translatesAutoresizingMaskIntoConstraints = false
+        iconTile.wantsLayer = true
+        iconTile.layer?.cornerRadius = 11
+        iconTile.layer?.cornerCurve = .continuous
+        iconTile.layer?.backgroundColor = tintBackgroundColor(for: color).cgColor
+        registerIconTile(iconTile, color: color)
+
+        let icon = NSImageView()
+        icon.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
+        icon.symbolConfiguration = .init(pointSize: 18, weight: .semibold)
+        icon.contentTintColor = color
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        iconTile.addSubview(icon)
+
+        let titleLabel = NSTextField(labelWithString: title)
+        titleLabel.font = .systemFont(ofSize: 13.5, weight: .semibold)
+        titleLabel.textColor = .labelColor
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.maximumNumberOfLines = 1
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let detailLabel = NSTextField(labelWithString: detail)
+        detailLabel.font = .systemFont(ofSize: 11.5)
+        detailLabel.textColor = .secondaryLabelColor
+        detailLabel.lineBreakMode = .byTruncatingTail
+        detailLabel.maximumNumberOfLines = 1
+        detailLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let seg = NSSegmentedControl(labels: segments, trackingMode: .selectOne, target: self, action: action)
+        seg.controlSize = .regular
+        seg.selectedSegment = selected
+        seg.translatesAutoresizingMaskIntoConstraints = false
+
+        row.addSubview(iconTile)
+        row.addSubview(titleLabel)
+        row.addSubview(detailLabel)
+        row.addSubview(seg)
+
+        NSLayoutConstraint.activate([
+            row.heightAnchor.constraint(equalToConstant: 64),
+            iconTile.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 18),
+            iconTile.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            iconTile.widthAnchor.constraint(equalToConstant: 38),
+            iconTile.heightAnchor.constraint(equalToConstant: 38),
+
+            icon.centerXAnchor.constraint(equalTo: iconTile.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: iconTile.centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 22),
+            icon.heightAnchor.constraint(equalToConstant: 22),
+
+            titleLabel.leadingAnchor.constraint(equalTo: iconTile.trailingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: seg.leadingAnchor, constant: -12),
+            titleLabel.topAnchor.constraint(equalTo: row.topAnchor, constant: 13),
+
+            detailLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            detailLabel.trailingAnchor.constraint(lessThanOrEqualTo: seg.leadingAnchor, constant: -12),
+            detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
+
+            seg.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -18),
+            seg.centerYAnchor.constraint(equalTo: row.centerYAnchor)
+        ])
+
+        return (row, seg)
+    }
+
+    private func settingsActionRow(
+        symbol: String,
+        title: String,
+        detail: String,
+        buttonTitle: String,
+        action: Selector
+    ) -> (row: NSView, button: NSButton) {
+        let row = NSView()
+        row.translatesAutoresizingMaskIntoConstraints = false
+
+        let color = iconColor(forSymbol: symbol)
+        let iconTile = NSView()
+        iconTile.translatesAutoresizingMaskIntoConstraints = false
+        iconTile.wantsLayer = true
+        iconTile.layer?.cornerRadius = 11
+        iconTile.layer?.cornerCurve = .continuous
+        iconTile.layer?.backgroundColor = tintBackgroundColor(for: color).cgColor
+        registerIconTile(iconTile, color: color)
+
+        let icon = NSImageView()
+        icon.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
+        icon.symbolConfiguration = .init(pointSize: 18, weight: .semibold)
+        icon.contentTintColor = color
+        icon.translatesAutoresizingMaskIntoConstraints = false
+        iconTile.addSubview(icon)
+
+        let titleLabel = NSTextField(labelWithString: title)
+        titleLabel.font = .systemFont(ofSize: 13.5, weight: .semibold)
+        titleLabel.textColor = .labelColor
+        titleLabel.lineBreakMode = .byTruncatingTail
+        titleLabel.maximumNumberOfLines = 1
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let detailLabel = NSTextField(labelWithString: detail)
+        detailLabel.font = .systemFont(ofSize: 11.5)
+        detailLabel.textColor = .secondaryLabelColor
+        detailLabel.lineBreakMode = .byTruncatingTail
+        detailLabel.maximumNumberOfLines = 1
+        detailLabel.translatesAutoresizingMaskIntoConstraints = false
+
+        let button = NSButton(title: buttonTitle, target: self, action: action)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.bezelStyle = .rounded
+        button.controlSize = .regular
+
+        row.addSubview(iconTile)
+        row.addSubview(titleLabel)
+        row.addSubview(detailLabel)
+        row.addSubview(button)
+
+        NSLayoutConstraint.activate([
+            row.heightAnchor.constraint(equalToConstant: 64),
+            iconTile.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 18),
+            iconTile.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            iconTile.widthAnchor.constraint(equalToConstant: 38),
+            iconTile.heightAnchor.constraint(equalToConstant: 38),
+
+            icon.centerXAnchor.constraint(equalTo: iconTile.centerXAnchor),
+            icon.centerYAnchor.constraint(equalTo: iconTile.centerYAnchor),
+            icon.widthAnchor.constraint(equalToConstant: 22),
+            icon.heightAnchor.constraint(equalToConstant: 22),
+
+            titleLabel.leadingAnchor.constraint(equalTo: iconTile.trailingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: button.leadingAnchor, constant: -12),
+            titleLabel.topAnchor.constraint(equalTo: row.topAnchor, constant: 13),
+
+            detailLabel.leadingAnchor.constraint(equalTo: titleLabel.leadingAnchor),
+            detailLabel.trailingAnchor.constraint(lessThanOrEqualTo: button.leadingAnchor, constant: -12),
+            detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
+
+            button.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -18),
+            button.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            button.heightAnchor.constraint(equalToConstant: 30),
+            button.widthAnchor.constraint(greaterThanOrEqualToConstant: 72)
+        ])
+
+        return (row, button)
+    }
+
+    private func saveActionLayout(_ layout: MenuLayout) {
+        preferences.set(layout.serialized, forKey: MenuLayout.preferenceKey)
+        preferences.synchronize()
+        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        reloadActionsPreservingScroll()
+    }
+
+    private func reloadActionsPreservingScroll() {
+        let oldScroll = contentContainer?.subviews.first as? NSScrollView
+        let origin = oldScroll?.contentView.bounds.origin ?? .zero
+        reloadCurrentTab()
+        guard let scroll = contentContainer?.subviews.first as? NSScrollView else { return }
+        var bounds = scroll.contentView.bounds
+        bounds.origin = origin
+        scroll.contentView.scroll(to: scroll.contentView.constrainBoundsRect(bounds).origin)
+        scroll.reflectScrolledClipView(scroll.contentView)
     }
 
     private func sectionTitle(_ title: String, key: String? = nil) -> NSView {
@@ -855,6 +1517,31 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             container.heightAnchor.constraint(equalToConstant: 26),
 
             label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 6),
+            label.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+        ])
+
+        return container
+    }
+
+    private func categoryHeader(_ title: String, key: String? = nil) -> NSView {
+        let container = NSView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+
+        let label = NSTextField(labelWithString: title)
+        label.font = .systemFont(ofSize: 11.5, weight: .medium)
+        label.textColor = .secondaryLabelColor
+        label.translatesAutoresizingMaskIntoConstraints = false
+        if let key {
+            sectionTitleLabels[key] = label
+        }
+
+        container.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            container.widthAnchor.constraint(equalToConstant: contentWidth),
+            container.heightAnchor.constraint(equalToConstant: 24),
+
+            label.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 20),
             label.centerYAnchor.constraint(equalTo: container.centerYAnchor)
         ])
 
@@ -1156,6 +1843,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         detail: String,
         key: String,
         items: [(value: String, title: String)],
+        controlWidth: CGFloat = 118,
         action: Selector
     ) -> NSView {
         let row = NSView()
@@ -1234,7 +1922,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             detailLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 5),
             popup.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -18),
             popup.centerYAnchor.constraint(equalTo: row.centerYAnchor),
-            popup.widthAnchor.constraint(equalToConstant: 118)
+            popup.widthAnchor.constraint(equalToConstant: controlWidth)
         ])
 
         return row
@@ -1404,30 +2092,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return row
     }
 
-    private func featureSettingsPanel() -> NSView {
-        settingsPanel(rows: [
-            preferenceRow(
-                symbol: "file-text",
-                title: AppText.localized("新建 Text", "New Text"),
-                detail: AppText.localized("在当前位置创建 Untitled.txt", "Create Untitled.txt here"),
-                key: RightMenuMiniPreferences.isNewTextEnabled
-            ),
-            preferenceRow(
-                symbol: "square-terminal",
-                title: AppText.localized("进入终端", "Open Terminal"),
-                detail: AppText.localized("从当前位置打开 Terminal", "Open Terminal at this location"),
-                key: RightMenuMiniPreferences.isTerminalEnabled
-            ),
-            preferenceRow(
-                symbol: "link",
-                title: AppText.localized("拷贝路径", "Copy Path"),
-                detail: AppText.localized("复制所选项目或当前文件夹路径", "Copy selected paths or current folder"),
-                key: RightMenuMiniPreferences.isCopyPathEnabled
-            )
-        ])
-    }
-
-    private func settingsPanel(rows: [NSView]) -> NSView {
+    private func settingsPanel(rows: [NSView], rowHeight: CGFloat = 64, insetLeading: CGFloat = 74) -> NSView {
         let list = NSStackView()
         list.orientation = .vertical
         list.alignment = .width
@@ -1437,12 +2102,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         rows.enumerated().forEach { index, row in
             if index > 0 {
-                list.addArrangedSubview(divider())
+                list.addArrangedSubview(divider(insetLeading: insetLeading))
             }
             list.addArrangedSubview(row)
         }
 
-        let panel = plainCard(height: CGFloat(rows.count * 64 + max(rows.count - 1, 0)), cornerRadius: 16, fixedWidth: contentWidth)
+        let panelHeight = CGFloat(CGFloat(rows.count) * rowHeight + CGFloat(max(rows.count - 1, 0)))
+        let panel = plainCard(height: panelHeight, cornerRadius: 16, fixedWidth: contentWidth)
         panel.addSubview(list)
 
         NSLayoutConstraint.activate([
@@ -1508,20 +2174,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func iconColor(forSymbol symbol: String) -> NSColor {
+        if let color = MenuWishAssets.actionColor(for: symbol) { return color }
         switch symbol {
         case "power":
             return .systemBlue
-        case "rectangle.stack":
+        case "rectangle.stack", "rectangle.on.rectangle":
             return .systemPurple
         case "doc.badge.plus", "doc.text", "square.and.pencil", "plus.square", "file-text":
             return .systemOrange
         case "terminal", "terminal.fill", "square-terminal":
             return .systemTeal
-        case "doc.on.doc", "link":
+        case "tablecells", "doc.on.doc", "link":
             return .systemGreen
         case "sparkles":
             return .controlAccentColor
-        case "character.bubble":
+        case "markdown", "doc.richtext", "character.bubble":
             return .systemBlue
         case "circle.lefthalf.filled":
             return .systemOrange
@@ -1534,7 +2201,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func plainCard(height: CGFloat, cornerRadius: CGFloat, fixedWidth: CGFloat?) -> NSView {
+    private func plainCard(height: CGFloat?, cornerRadius: CGFloat, fixedWidth: CGFloat?) -> NSView {
         let view = NSView()
         view.translatesAutoresizingMaskIntoConstraints = false
         view.wantsLayer = true
@@ -1551,9 +2218,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         view.layer?.shadowOpacity = usesDarkAppearance ? 0.12 : 0.04
         view.layer?.masksToBounds = false
 
-        var constraints = [
-            view.heightAnchor.constraint(equalToConstant: height)
-        ]
+        var constraints: [NSLayoutConstraint] = []
+        if let height {
+            constraints.append(view.heightAnchor.constraint(equalToConstant: height))
+        }
         if let fixedWidth {
             constraints.append(view.widthAnchor.constraint(equalToConstant: fixedWidth))
         }
@@ -1562,37 +2230,56 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         return view
     }
 
-    private func preferenceRow(symbol: String, title: String, detail: String, key: String) -> NSView {
+    private func preferenceRow(
+        symbol: String,
+        title: String,
+        detail: String,
+        key: String,
+        isCompact: Bool = false
+    ) -> NSView {
         let row = NSView()
         row.translatesAutoresizingMaskIntoConstraints = false
+
+        let rowHeight: CGFloat = isCompact ? 48 : 64
+        let tileCornerRadius: CGFloat = isCompact ? 8 : 11
+        let tileSize: CGFloat = isCompact ? 30 : 38
+        let iconSize: CGFloat = isCompact ? 16 : 22
+        let iconPointSize: CGFloat = isCompact ? 16 : 20
+        let textLeading: CGFloat = isCompact ? 12 : 16
+        let titleFontSize: CGFloat = isCompact ? 13 : 13.5
+        let detailFontSize: CGFloat = isCompact ? 11 : 11.5
+        let textSpacing: CGFloat = isCompact ? 2 : 4
+        let sidePadding: CGFloat = isCompact ? 20 : 18
+        let toggleTrailing: CGFloat = -20
 
         let color = iconColor(forSymbol: symbol)
         let iconTile = NSView()
         iconTile.translatesAutoresizingMaskIntoConstraints = false
         iconTile.wantsLayer = true
-        iconTile.layer?.cornerRadius = 12
+        iconTile.layer?.cornerRadius = tileCornerRadius
+        iconTile.layer?.cornerCurve = .continuous
         iconTile.layer?.backgroundColor = tintBackgroundColor(for: color).cgColor
         registerIconTile(iconTile, color: color)
 
         let icon = NSImageView()
-        if let iconImage = MenuWishAssets.image(named: symbol, size: NSSize(width: 20, height: 20)) {
+        if let iconImage = MenuWishAssets.image(named: symbol, size: NSSize(width: iconSize, height: iconSize)) {
             icon.image = iconImage
         } else {
             icon.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
-            icon.symbolConfiguration = .init(pointSize: 20, weight: .semibold)
+            icon.symbolConfiguration = .init(pointSize: iconPointSize, weight: .semibold)
         }
         icon.contentTintColor = color
         icon.translatesAutoresizingMaskIntoConstraints = false
         iconTile.addSubview(icon)
 
         let titleLabel = NSTextField(labelWithString: title)
-        titleLabel.font = .systemFont(ofSize: 13.5, weight: .semibold)
+        titleLabel.font = .systemFont(ofSize: titleFontSize, weight: .semibold)
         titleLabel.textColor = .labelColor
         titleLabel.lineBreakMode = .byTruncatingTail
         titleLabel.maximumNumberOfLines = 1
 
         let detailLabel = NSTextField(labelWithString: detail)
-        detailLabel.font = .systemFont(ofSize: 11.5)
+        detailLabel.font = .systemFont(ofSize: detailFontSize)
         detailLabel.textColor = .secondaryLabelColor
         detailLabel.lineBreakMode = .byTruncatingTail
         detailLabel.maximumNumberOfLines = 1
@@ -1600,7 +2287,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let textStack = NSStackView(views: [titleLabel, detailLabel])
         textStack.orientation = .vertical
         textStack.alignment = .leading
-        textStack.spacing = 4
+        textStack.spacing = textSpacing
         textStack.translatesAutoresizingMaskIntoConstraints = false
 
         let toggle = NSSwitch()
@@ -1625,31 +2312,537 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         row.addSubview(toggle)
 
         let constraints = [
-            row.heightAnchor.constraint(equalToConstant: 64),
+            row.heightAnchor.constraint(equalToConstant: rowHeight),
             iconTile.centerYAnchor.constraint(equalTo: row.centerYAnchor),
-            iconTile.widthAnchor.constraint(equalToConstant: 40),
-            iconTile.heightAnchor.constraint(equalToConstant: 40),
+            iconTile.widthAnchor.constraint(equalToConstant: tileSize),
+            iconTile.heightAnchor.constraint(equalToConstant: tileSize),
             icon.centerXAnchor.constraint(equalTo: iconTile.centerXAnchor),
             icon.centerYAnchor.constraint(equalTo: iconTile.centerYAnchor),
-            icon.widthAnchor.constraint(equalToConstant: 22),
-            icon.heightAnchor.constraint(equalToConstant: 22),
-            textStack.leadingAnchor.constraint(equalTo: iconTile.trailingAnchor, constant: 16),
+            icon.widthAnchor.constraint(equalToConstant: iconSize),
+            icon.heightAnchor.constraint(equalToConstant: iconSize),
+            textStack.leadingAnchor.constraint(equalTo: iconTile.trailingAnchor, constant: textLeading),
             textStack.trailingAnchor.constraint(lessThanOrEqualTo: toggle.leadingAnchor, constant: -12),
             textStack.centerYAnchor.constraint(equalTo: row.centerYAnchor),
-            toggle.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -22),
+            toggle.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: toggleTrailing),
             toggle.centerYAnchor.constraint(equalTo: row.centerYAnchor),
-            iconTile.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 18)
+            iconTile.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: sidePadding)
         ]
 
         NSLayoutConstraint.activate(constraints)
         return row
     }
 
-    private var versionDescription: String {
-        "v\(currentVersionString)"
+    // MARK: - Live Finder Menu Preview & Layout Card
+
+    private func menuLayoutAndPreviewCard() -> NSView {
+        let card = NSView()
+        card.translatesAutoresizingMaskIntoConstraints = false
+        card.wantsLayer = true
+        cardViews.append(card)
+        card.layer?.cornerRadius = 16
+        card.layer?.cornerCurve = .continuous
+        card.layer?.backgroundColor = cardBackgroundColor.cgColor
+        card.layer?.borderWidth = 0
+        card.layer?.borderColor = cardBorderColor.cgColor
+        card.layer?.shadowColor = cardShadowColor.cgColor
+        card.layer?.shadowOffset = CGSize(width: 0, height: -2.5)
+        card.layer?.shadowRadius = 8.0
+        card.layer?.shadowOpacity = usesDarkAppearance ? 0.12 : 0.04
+        card.layer?.masksToBounds = false
+
+        let previewTitle = NSTextField(labelWithString: AppText.localized("菜单预览", "Menu Preview"))
+        previewTitle.font = .systemFont(ofSize: 14, weight: .semibold)
+        previewTitle.textColor = .labelColor
+        previewTitle.translatesAutoresizingMaskIntoConstraints = false
+
+        let seg = NSSegmentedControl(
+            labels: MenuDisplayMode.allCases.map { $0.title(isEnglish: AppText.isEnglish) },
+            trackingMode: .selectOne,
+            target: self,
+            action: #selector(layoutSegmentChanged(_:))
+        )
+        seg.controlSize = .regular
+        seg.segmentStyle = .rounded
+        seg.setAccessibilityLabel(AppText.localized("显示样式", "Display Style"))
+        seg.selectedSegment = menuDisplayMode.segmentIndex
+        seg.translatesAutoresizingMaskIntoConstraints = false
+        self.layoutSegmentControl = seg
+
+        let toolbar = NSView()
+        toolbar.translatesAutoresizingMaskIntoConstraints = false
+        toolbar.addSubview(previewTitle)
+        toolbar.addSubview(seg)
+
+        let menuArea = NSView()
+        menuArea.translatesAutoresizingMaskIntoConstraints = false
+        menuArea.wantsLayer = true
+        menuArea.layer?.cornerRadius = 10
+        menuArea.layer?.cornerCurve = .continuous
+        menuArea.layer?.backgroundColor = usesDarkAppearance
+            ? NSColor(white: 0.12, alpha: 0.7).cgColor
+            : NSColor(white: 0.96, alpha: 1.0).cgColor
+        menuArea.layer?.borderWidth = 0
+        menuArea.layer?.borderColor = usesDarkAppearance
+            ? NSColor.white.withAlphaComponent(0.08).cgColor
+            : NSColor.black.withAlphaComponent(0.06).cgColor
+        card.addSubview(toolbar)
+        card.addSubview(menuArea)
+        self.previewMenuContainer = menuArea
+
+        NSLayoutConstraint.activate([
+            card.widthAnchor.constraint(equalToConstant: contentWidth),
+
+            toolbar.topAnchor.constraint(equalTo: card.topAnchor),
+            toolbar.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 20),
+            toolbar.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -20),
+            toolbar.heightAnchor.constraint(equalToConstant: 52),
+
+            previewTitle.leadingAnchor.constraint(equalTo: toolbar.leadingAnchor),
+            previewTitle.centerYAnchor.constraint(equalTo: toolbar.centerYAnchor),
+            previewTitle.trailingAnchor.constraint(lessThanOrEqualTo: seg.leadingAnchor, constant: -16),
+            seg.trailingAnchor.constraint(equalTo: toolbar.trailingAnchor),
+            seg.centerYAnchor.constraint(equalTo: toolbar.centerYAnchor),
+
+            menuArea.topAnchor.constraint(equalTo: toolbar.bottomAnchor),
+            menuArea.leadingAnchor.constraint(equalTo: card.leadingAnchor, constant: 12),
+            menuArea.trailingAnchor.constraint(equalTo: card.trailingAnchor, constant: -12),
+            menuArea.bottomAnchor.constraint(equalTo: card.bottomAnchor, constant: -12)
+        ])
+
+        self.previewStageView = card
+        renderMenuPreview()
+        return card
     }
 
-    private func divider() -> NSView {
+    private func simulatedMenuBox() -> NSView {
+        let wrapper = NSView()
+        wrapper.translatesAutoresizingMaskIntoConstraints = false
+        wrapper.wantsLayer = true
+        wrapper.layer?.shadowColor = NSColor.black.cgColor
+        wrapper.layer?.shadowOffset = CGSize(width: 0, height: -3)
+        wrapper.layer?.shadowRadius = 10
+        wrapper.layer?.shadowOpacity = usesDarkAppearance ? 0.35 : 0.18
+        wrapper.layer?.masksToBounds = false
+
+        let box = NSVisualEffectView()
+        box.translatesAutoresizingMaskIntoConstraints = false
+        box.material = .popover
+        box.blendingMode = .withinWindow
+        box.state = .active
+        box.wantsLayer = true
+        box.layer?.cornerRadius = 8
+        box.layer?.cornerCurve = .continuous
+        box.layer?.borderWidth = 0.5
+        box.layer?.borderColor = usesDarkAppearance
+            ? NSColor(white: 1.0, alpha: 0.16).cgColor
+            : NSColor(white: 0.0, alpha: 0.12).cgColor
+        box.layer?.masksToBounds = true
+        wrapper.addSubview(box)
+        NSLayoutConstraint.activate([
+            box.topAnchor.constraint(equalTo: wrapper.topAnchor),
+            box.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor),
+            box.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor),
+            box.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor)
+        ])
+        return wrapper
+    }
+
+    private func previewMenuIcon(named name: String) -> NSImage? {
+        MenuWishAssets.finderMenuImage(named: name,
+            appearance: window?.effectiveAppearance ?? NSApp.effectiveAppearance)
+    }
+
+    private func simulatedMenuItem(
+        icon: NSImage?,
+        title: String,
+        hasChevron: Bool = false,
+        isDimmed: Bool = false,
+        isHighlighted: Bool = false
+    ) -> NSView {
+        let row = NSView()
+        row.translatesAutoresizingMaskIntoConstraints = false
+        row.wantsLayer = true
+        if isHighlighted {
+            row.layer?.cornerRadius = 5
+            row.layer?.cornerCurve = .continuous
+            row.layer?.backgroundColor = NSColor.controlAccentColor.cgColor
+        }
+
+        let imgView = NSImageView()
+        imgView.image = icon
+        imgView.symbolConfiguration = .init(pointSize: 13, weight: .medium)
+        // Finder's baked monochrome images retain their color on selection.
+        // Only the contextual system items use template tinting here.
+        imgView.contentTintColor = icon?.isTemplate == true
+            ? (isDimmed ? .tertiaryLabelColor : .labelColor) : nil
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        row.addSubview(imgView)
+
+        let label = NSTextField(labelWithString: title)
+        label.font = .systemFont(ofSize: 12.5, weight: isHighlighted ? .semibold : .regular)
+        label.textColor = isHighlighted ? .white : (isDimmed ? .tertiaryLabelColor : .labelColor)
+        label.lineBreakMode = .byTruncatingTail
+        label.translatesAutoresizingMaskIntoConstraints = false
+        row.addSubview(label)
+
+        NSLayoutConstraint.activate([
+            row.heightAnchor.constraint(equalToConstant: 22),
+            imgView.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 7),
+            imgView.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            imgView.widthAnchor.constraint(equalToConstant: 16),
+            imgView.heightAnchor.constraint(equalToConstant: 16),
+
+            label.leadingAnchor.constraint(equalTo: imgView.trailingAnchor, constant: 7),
+            label.centerYAnchor.constraint(equalTo: row.centerYAnchor)
+        ])
+
+        if hasChevron {
+            let chevron = NSImageView()
+            chevron.image = NSImage(systemSymbolName: "chevron.right", accessibilityDescription: nil)
+            chevron.symbolConfiguration = .init(pointSize: 9, weight: .bold)
+            chevron.contentTintColor = isHighlighted ? .white : .tertiaryLabelColor
+            chevron.translatesAutoresizingMaskIntoConstraints = false
+            row.addSubview(chevron)
+            NSLayoutConstraint.activate([
+                chevron.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -7),
+                chevron.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+                label.trailingAnchor.constraint(lessThanOrEqualTo: chevron.leadingAnchor, constant: -4)
+            ])
+        } else {
+            label.trailingAnchor.constraint(lessThanOrEqualTo: row.trailingAnchor, constant: -8).isActive = true
+        }
+
+        return row
+    }
+
+    private func simulatedMenuDivider() -> NSView {
+        let container = NSView()
+        container.translatesAutoresizingMaskIntoConstraints = false
+        let line = NSView()
+        line.translatesAutoresizingMaskIntoConstraints = false
+        line.wantsLayer = true
+        line.layer?.backgroundColor = usesDarkAppearance
+            ? NSColor.white.withAlphaComponent(0.12).cgColor
+            : NSColor.black.withAlphaComponent(0.10).cgColor
+        container.addSubview(line)
+        NSLayoutConstraint.activate([
+            container.heightAnchor.constraint(equalToConstant: 7),
+            line.centerYAnchor.constraint(equalTo: container.centerYAnchor),
+            line.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 6),
+            line.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -6),
+            line.heightAnchor.constraint(equalToConstant: 1)
+        ])
+        return container
+    }
+
+    private func categorizedPreviewBox(rows: [NSView], width: CGFloat) -> NSView {
+        let box = simulatedMenuBox()
+        let list = NSStackView(views: rows)
+        list.orientation = .vertical
+        list.alignment = .width
+        list.spacing = 2
+        list.translatesAutoresizingMaskIntoConstraints = false
+        box.addSubview(list)
+        rows.forEach { $0.widthAnchor.constraint(equalTo: list.widthAnchor).isActive = true }
+        let height = rows.reduce(CGFloat(10 + max(0, rows.count - 1) * 2)) { $0 + $1.fittingSize.height }
+        NSLayoutConstraint.activate([
+            box.widthAnchor.constraint(equalToConstant: width),
+            box.heightAnchor.constraint(equalToConstant: height),
+            list.topAnchor.constraint(equalTo: box.topAnchor, constant: 5),
+            list.bottomAnchor.constraint(equalTo: box.bottomAnchor, constant: -5),
+            list.leadingAnchor.constraint(equalTo: box.leadingAnchor, constant: 5),
+            list.trailingAnchor.constraint(equalTo: box.trailingAnchor, constant: -5)
+        ])
+        return box
+    }
+
+    private func renderCategorizedPreview(in container: NSView, layout: MenuLayout, isServiceEnabled: Bool) {
+        let values = Dictionary(uniqueKeysWithValues: MenuAction.allCases.map { ($0.preferenceKey, preferenceValue(for: $0.preferenceKey)) })
+        let groups = layout.menuGroups(mode: .categorized, values: values)
+        let selected = groups.first { $0.category == previewCategory } ?? groups.first
+        if let category = selected?.category { previewCategory = category }
+
+        var parentRows: [NSView] = [simulatedMenuItem(
+            icon: NSImage(systemSymbolName: "info.circle", accessibilityDescription: nil),
+            title: AppText.localized("显示简介", "Get Info"), isDimmed: true), simulatedMenuDivider()]
+        for group in groups {
+            let title = group.title(isEnglish: AppText.isEnglish)
+            let row = simulatedMenuItem(icon: previewMenuIcon(named: "sparkles"),
+                title: title, hasChevron: true, isHighlighted: group.category == previewCategory)
+            let button = NSButton(title: "", target: self, action: #selector(previewCategorySelected(_:)))
+            button.isBordered = false
+            button.identifier = NSUserInterfaceItemIdentifier(group.category!.rawValue)
+            button.setAccessibilityLabel(title)
+            button.toolTip = AppText.localized("点击查看此类目的菜单预览", "Click to preview this category")
+            button.translatesAutoresizingMaskIntoConstraints = false
+            button.addSubview(row)
+            NSLayoutConstraint.activate([
+                button.heightAnchor.constraint(equalToConstant: 22),
+                row.topAnchor.constraint(equalTo: button.topAnchor),
+                row.bottomAnchor.constraint(equalTo: button.bottomAnchor),
+                row.leadingAnchor.constraint(equalTo: button.leadingAnchor),
+                row.trailingAnchor.constraint(equalTo: button.trailingAnchor)
+            ])
+            parentRows.append(button)
+        }
+        if groups.isEmpty {
+            parentRows.append(simulatedMenuItem(icon: nil,
+                title: AppText.localized("未启用任何菜单项", "No items enabled"), isDimmed: true))
+        }
+        parentRows.append(simulatedMenuDivider())
+        parentRows.append(simulatedMenuItem(icon: NSImage(systemSymbolName: "wand.and.stars", accessibilityDescription: nil),
+            title: AppText.localized("快速操作", "Quick Actions"), hasChevron: true, isDimmed: true))
+        let parent = categorizedPreviewBox(rows: parentRows, width: 220)
+        var boxes: [NSView] = [parent]
+        if let selected {
+            let rows = selected.actions.map { action in
+                simulatedMenuItem(icon: previewMenuIcon(named: action.symbolName),
+                    title: action.title(isEnglish: AppText.isEnglish))
+            }
+            boxes.append(categorizedPreviewBox(rows: rows, width: 235))
+        }
+        let menus = NSStackView(views: boxes)
+        menus.orientation = .horizontal
+        menus.alignment = .top
+        menus.spacing = 4
+        menus.translatesAutoresizingMaskIntoConstraints = false
+        menus.alphaValue = isServiceEnabled ? 1 : 0.42
+        container.addSubview(menus)
+        NSLayoutConstraint.activate([
+            menus.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+            menus.topAnchor.constraint(equalTo: container.topAnchor, constant: 14),
+            menus.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -14)
+        ])
+    }
+
+    @objc private func previewCategorySelected(_ sender: NSButton) {
+        guard let value = sender.identifier?.rawValue, let category = MenuCategory(rawValue: value) else { return }
+        previewCategory = category
+        renderMenuPreview()
+    }
+
+    private func renderMenuPreview() {
+        guard let container = previewMenuContainer else { return }
+        container.subviews.forEach { $0.removeFromSuperview() }
+
+        container.layer?.backgroundColor = usesDarkAppearance
+            ? NSColor(white: 0.12, alpha: 0.7).cgColor
+            : NSColor(white: 0.94, alpha: 0.75).cgColor
+        container.layer?.borderColor = usesDarkAppearance
+            ? NSColor.white.withAlphaComponent(0.08).cgColor
+            : NSColor.black.withAlphaComponent(0.06).cgColor
+        previewModePill?.layer?.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(usesDarkAppearance ? 0.18 : 0.09).cgColor
+
+        let isGrouped = menuDisplayMode != .flat
+        let isServiceEnabled = finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled)
+
+        previewModeLabel?.stringValue = menuDisplayMode.title(isEnglish: AppText.isEnglish)
+
+        let layout = actionLayout
+        let enabledActions = layout.unifiedActions.filter { preferenceValue(for: $0.preferenceKey) }
+
+        if menuDisplayMode == .categorized {
+            renderCategorizedPreview(in: container, layout: layout, isServiceEnabled: isServiceEnabled)
+        } else if !isGrouped {
+            let menuBox = simulatedMenuBox()
+            let stack = NSStackView()
+            stack.orientation = .vertical
+            stack.alignment = .width
+            stack.spacing = 2
+            stack.translatesAutoresizingMaskIntoConstraints = false
+
+            let infoItem = simulatedMenuItem(
+                icon: NSImage(systemSymbolName: "info.circle", accessibilityDescription: nil),
+                title: AppText.localized("显示简介", "Get Info"),
+                isDimmed: true
+            )
+            stack.addArrangedSubview(infoItem)
+            stack.addArrangedSubview(simulatedMenuDivider())
+
+            if enabledActions.isEmpty {
+                let emptyRow = NSView()
+                emptyRow.translatesAutoresizingMaskIntoConstraints = false
+                let emptyLabel = NSTextField(labelWithString: AppText.localized("未启用任何菜单项", "No items enabled"))
+                emptyLabel.font = .systemFont(ofSize: 11.5)
+                emptyLabel.textColor = .tertiaryLabelColor
+                emptyLabel.alignment = .center
+                emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+                emptyRow.addSubview(emptyLabel)
+                NSLayoutConstraint.activate([
+                    emptyRow.heightAnchor.constraint(equalToConstant: 24),
+                    emptyLabel.centerXAnchor.constraint(equalTo: emptyRow.centerXAnchor),
+                    emptyLabel.centerYAnchor.constraint(equalTo: emptyRow.centerYAnchor)
+                ])
+                stack.addArrangedSubview(emptyRow)
+            } else {
+                for action in enabledActions {
+                    let img = previewMenuIcon(named: action.symbolName)
+                    let row = simulatedMenuItem(
+                        icon: img,
+                        title: action.title(isEnglish: AppText.isEnglish)
+                    )
+                    stack.addArrangedSubview(row)
+                }
+            }
+
+            stack.addArrangedSubview(simulatedMenuDivider())
+            let quickActionsItem = simulatedMenuItem(
+                icon: NSImage(systemSymbolName: "wand.and.stars", accessibilityDescription: nil),
+                title: AppText.localized("快速操作", "Quick Actions"),
+                hasChevron: true,
+                isDimmed: true
+            )
+            stack.addArrangedSubview(quickActionsItem)
+
+            menuBox.addSubview(stack)
+            container.addSubview(menuBox)
+
+            NSLayoutConstraint.activate([
+                stack.topAnchor.constraint(equalTo: menuBox.topAnchor, constant: 5),
+                stack.bottomAnchor.constraint(equalTo: menuBox.bottomAnchor, constant: -5),
+                stack.leadingAnchor.constraint(equalTo: menuBox.leadingAnchor, constant: 5),
+                stack.trailingAnchor.constraint(equalTo: menuBox.trailingAnchor, constant: -5),
+
+                menuBox.widthAnchor.constraint(equalToConstant: 220),
+                menuBox.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+                menuBox.topAnchor.constraint(equalTo: container.topAnchor, constant: 14),
+                menuBox.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -14)
+            ])
+
+            menuBox.alphaValue = isServiceEnabled ? 1.0 : 0.42
+
+        } else {
+            let parentBox = simulatedMenuBox()
+            let parentStack = NSStackView()
+            parentStack.orientation = .vertical
+            parentStack.alignment = .width
+            parentStack.spacing = 2
+            parentStack.translatesAutoresizingMaskIntoConstraints = false
+
+            let infoItem = simulatedMenuItem(
+                icon: NSImage(systemSymbolName: "info.circle", accessibilityDescription: nil),
+                title: AppText.localized("显示简介", "Get Info"),
+                isDimmed: true
+            )
+            parentStack.addArrangedSubview(infoItem)
+            parentStack.addArrangedSubview(simulatedMenuDivider())
+
+            let groupItem = simulatedMenuItem(
+                icon: previewMenuIcon(named: "sparkles"),
+                title: "MenuWish",
+                hasChevron: true,
+                isHighlighted: true
+            )
+            parentStack.addArrangedSubview(groupItem)
+            parentStack.addArrangedSubview(simulatedMenuDivider())
+
+            let quickActionsItem = simulatedMenuItem(
+                icon: NSImage(systemSymbolName: "wand.and.stars", accessibilityDescription: nil),
+                title: AppText.localized("快速操作", "Quick Actions"),
+                hasChevron: true,
+                isDimmed: true
+            )
+            parentStack.addArrangedSubview(quickActionsItem)
+
+            parentBox.addSubview(parentStack)
+
+            let subBox = simulatedMenuBox()
+            let subStack = NSStackView()
+            subStack.orientation = .vertical
+            subStack.alignment = .width
+            subStack.spacing = 2
+            subStack.translatesAutoresizingMaskIntoConstraints = false
+
+            if enabledActions.isEmpty {
+                let emptyRow = NSView()
+                emptyRow.translatesAutoresizingMaskIntoConstraints = false
+                let emptyLabel = NSTextField(labelWithString: AppText.localized("未启用任何菜单项", "No items enabled"))
+                emptyLabel.font = .systemFont(ofSize: 11.5)
+                emptyLabel.textColor = .tertiaryLabelColor
+                emptyLabel.alignment = .center
+                emptyLabel.translatesAutoresizingMaskIntoConstraints = false
+                emptyRow.addSubview(emptyLabel)
+                NSLayoutConstraint.activate([
+                    emptyRow.heightAnchor.constraint(equalToConstant: 24),
+                    emptyLabel.centerXAnchor.constraint(equalTo: emptyRow.centerXAnchor),
+                    emptyLabel.centerYAnchor.constraint(equalTo: emptyRow.centerYAnchor)
+                ])
+                subStack.addArrangedSubview(emptyRow)
+            } else {
+                for action in enabledActions {
+                    let img = previewMenuIcon(named: action.symbolName)
+                    let row = simulatedMenuItem(
+                        icon: img,
+                        title: action.title(isEnglish: AppText.isEnglish)
+                    )
+                    subStack.addArrangedSubview(row)
+                }
+            }
+
+            subBox.addSubview(subStack)
+
+            let groupHStack = NSStackView(views: [parentBox, subBox])
+            groupHStack.orientation = .horizontal
+            groupHStack.alignment = .top
+            groupHStack.spacing = 4
+            groupHStack.translatesAutoresizingMaskIntoConstraints = false
+            container.addSubview(groupHStack)
+
+            NSLayoutConstraint.activate([
+                parentStack.topAnchor.constraint(equalTo: parentBox.topAnchor, constant: 5),
+                parentStack.bottomAnchor.constraint(equalTo: parentBox.bottomAnchor, constant: -5),
+                parentStack.leadingAnchor.constraint(equalTo: parentBox.leadingAnchor, constant: 5),
+                parentStack.trailingAnchor.constraint(equalTo: parentBox.trailingAnchor, constant: -5),
+                parentBox.widthAnchor.constraint(equalToConstant: 140),
+
+                subStack.topAnchor.constraint(equalTo: subBox.topAnchor, constant: 5),
+                subStack.bottomAnchor.constraint(equalTo: subBox.bottomAnchor, constant: -5),
+                subStack.leadingAnchor.constraint(equalTo: subBox.leadingAnchor, constant: 5),
+                subStack.trailingAnchor.constraint(equalTo: subBox.trailingAnchor, constant: -5),
+                subBox.widthAnchor.constraint(equalToConstant: 190),
+
+                groupHStack.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+                groupHStack.topAnchor.constraint(equalTo: container.topAnchor, constant: 14),
+                groupHStack.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -14)
+            ])
+
+            parentBox.alphaValue = isServiceEnabled ? 1.0 : 0.42
+            subBox.alphaValue = isServiceEnabled ? 1.0 : 0.42
+        }
+
+        if !isServiceEnabled {
+            let statusPill = NSView()
+            statusPill.translatesAutoresizingMaskIntoConstraints = false
+            statusPill.wantsLayer = true
+            statusPill.layer?.cornerRadius = 6
+            statusPill.layer?.backgroundColor = usesDarkAppearance
+                ? NSColor(white: 0.15, alpha: 0.95).cgColor
+                : NSColor(white: 0.96, alpha: 0.95).cgColor
+            statusPill.layer?.borderWidth = 0.5
+            statusPill.layer?.borderColor = usesDarkAppearance
+                ? NSColor.white.withAlphaComponent(0.15).cgColor
+                : NSColor.black.withAlphaComponent(0.12).cgColor
+
+            let statusLabel = NSTextField(labelWithString: AppText.localized("右键菜单服务已暂停", "Context Menu Service Paused"))
+            statusLabel.font = .systemFont(ofSize: 11, weight: .medium)
+            statusLabel.textColor = .secondaryLabelColor
+            statusLabel.translatesAutoresizingMaskIntoConstraints = false
+            statusPill.addSubview(statusLabel)
+
+            container.addSubview(statusPill)
+            NSLayoutConstraint.activate([
+                statusLabel.leadingAnchor.constraint(equalTo: statusPill.leadingAnchor, constant: 8),
+                statusLabel.trailingAnchor.constraint(equalTo: statusPill.trailingAnchor, constant: -8),
+                statusLabel.topAnchor.constraint(equalTo: statusPill.topAnchor, constant: 3),
+                statusLabel.bottomAnchor.constraint(equalTo: statusPill.bottomAnchor, constant: -3),
+
+                statusPill.centerXAnchor.constraint(equalTo: container.centerXAnchor),
+                statusPill.centerYAnchor.constraint(equalTo: container.centerYAnchor)
+            ])
+        }
+    }
+
+    private func divider(insetLeading: CGFloat = 74) -> NSView {
         let view = NSView()
         view.translatesAutoresizingMaskIntoConstraints = false
 
@@ -1663,7 +2856,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         view.wantsLayer = true
         NSLayoutConstraint.activate([
             view.heightAnchor.constraint(equalToConstant: 1),
-            line.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 74),
+            line.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: insetLeading),
             line.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -22),
             line.topAnchor.constraint(equalTo: view.topAnchor),
             line.bottomAnchor.constraint(equalTo: view.bottomAnchor)
@@ -1693,8 +2886,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc private func languageSelectionChanged(_ sender: NSPopUpButton) {
         updateStringPreference(from: sender)
+        configureApplicationMenu()
         configureStatusItem()
         refreshLocalizedInterface()
+    }
+
+    @objc private func displayLocationSelectionChanged(_ sender: NSPopUpButton) {
+        updateStringPreference(from: sender)
+        applyDisplayLocation()
     }
 
     @objc private func appearanceSelectionChanged(_ sender: NSPopUpButton) {
@@ -1751,25 +2950,25 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func refreshVisibleLocalizedContent() {
+        if currentTab == .actions { reloadCurrentTab(); return }
         sectionTitleLabels["section.status"]?.stringValue = AppText.localized("服务与状态", "Service & Status")
         sectionTitleLabels["section.preferences"]?.stringValue = AppText.localized("偏好", "Preferences")
         sectionTitleLabels["section.about"]?.stringValue = AppText.localized("关于", "About")
-        sectionTitleLabels["section.layout"]?.stringValue = AppText.localized("菜单布局", "Menu Layout")
-        sectionTitleLabels["section.features"]?.stringValue = AppText.localized("快捷功能", "Quick Actions")
+        sectionTitleLabels["section.menuItems"]?.stringValue = AppText.localized("在访达右键菜单中显示以下项目", "Show Items in Finder Context Menu")
 
         localizedButtons["authorization"]?.title = AppText.localized("授权", "Authorize")
-        localizedButtons["version.check"]?.title = updateDownloadAvailable
-            ? AppText.localized("前往下载最新版本", "Download Latest")
-            : AppText.localized("检查", "Check")
+        refreshUpdateControls()
         localizedButtons["github"]?.title = AppText.localized("前往", "Visit")
 
         rowTitleLabels[RightMenuMiniPreferences.isMenuEnabled]?.stringValue = AppText.localized("右键菜单服务", "Context Menu Service")
         rowTitleLabels[RightMenuMiniPreferences.languageMode]?.stringValue = AppText.localized("语言", "Language")
         rowDetailLabels[RightMenuMiniPreferences.languageMode]?.stringValue = AppText.localized("选择 App 和 Finder 菜单显示语言", "Choose the app and Finder menu language")
-        rowTitleLabels[RightMenuMiniPreferences.appearanceMode]?.stringValue = AppText.localized("显示模式", "Display Mode")
+        rowTitleLabels[RightMenuMiniPreferences.appearanceMode]?.stringValue = AppText.localized("外观", "Appearance")
         rowDetailLabels[RightMenuMiniPreferences.appearanceMode]?.stringValue = AppText.localized("选择浅色、深色或跟随系统", "Choose light, dark, or system appearance")
         rowTitleLabels["version"]?.stringValue = AppText.localized("当前版本", "Current Version")
-        rowDetailLabels["version"]?.stringValue = AppText.localized("可检查最新版本与发布日志", "Check latest version and release notes")
+        rowTitleLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("应用入口", "App Access")
+        rowDetailLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("选择在菜单栏或 Dock 中显示 MenuWish", "Show MenuWish in the menu bar or Dock")
+        updatePopup(AppDisplayLocation.preferenceKey, items: displayLocationItems)
 
         updatePopup(
             RightMenuMiniPreferences.languageMode,
@@ -1787,17 +2986,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 (RightMenuMiniPreferences.darkValue, AppText.localized("深色", "Dark"))
             ]
         )
-        flatLayoutCard?.updateText(
-            title: AppText.localized("平铺显示", "Flat Layout"),
-            detail: AppText.localized("直接显示三项功能", "Show actions directly")
-        )
-        groupedLayoutCard?.updateText(
-            title: AppText.localized("折叠显示", "Grouped Layout"),
-            detail: AppText.localized("三项功能集合显示", "Show actions in a submenu")
-        )
 
-        rowTitleLabels[RightMenuMiniPreferences.isNewTextEnabled]?.stringValue = AppText.localized("新建 Text", "New Text")
-        rowDetailLabels[RightMenuMiniPreferences.isNewTextEnabled]?.stringValue = AppText.localized("在当前位置创建 Untitled.txt", "Create Untitled.txt here")
+        for kind in NewFileKind.allCases {
+            rowTitleLabels[kind.preferenceKey]?.stringValue = kind.title(isEnglish: AppText.isEnglish)
+            rowDetailLabels[kind.preferenceKey]?.stringValue = kind.detail(isEnglish: AppText.isEnglish)
+        }
         rowTitleLabels[RightMenuMiniPreferences.isTerminalEnabled]?.stringValue = AppText.localized("进入终端", "Open Terminal")
         rowDetailLabels[RightMenuMiniPreferences.isTerminalEnabled]?.stringValue = AppText.localized("从当前位置打开 Terminal", "Open Terminal at this location")
         rowTitleLabels[RightMenuMiniPreferences.isCopyPathEnabled]?.stringValue = AppText.localized("拷贝路径", "Copy Path")
@@ -1841,13 +3034,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 }
             }
 
-            flatLayoutCard?.updateAppearance()
-            groupedLayoutCard?.updateAppearance()
             refreshSidebarSelectionAppearance()
             versionBadge?.layer?.backgroundColor = versionBadgeBackgroundColor.cgColor
             versionBadge?.layer?.borderColor = versionBadgeBorderColor.cgColor
             versionBadgeLabel?.textColor = .controlAccentColor
             applyAuthorizationStatus(finderExtensionEnabled)
+            renderMenuPreview()
         }
     }
 
@@ -1867,52 +3059,103 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         refreshPreferenceControls()
     }
 
-    @objc private func flatLayoutSelected(_ sender: LayoutOptionCard) {
+    @objc private func layoutSegmentChanged(_ sender: NSSegmentedControl) {
         guard finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled) else {
+            sender.selectedSegment = menuDisplayMode.segmentIndex
             return
         }
-        preferences.set(false, forKey: RightMenuMiniPreferences.isGroupedMenuEnabled)
+        guard MenuDisplayMode.allCases.indices.contains(sender.selectedSegment) else { return }
+        let mode = MenuDisplayMode.allCases[sender.selectedSegment]
+        preferences.set(mode.rawValue, forKey: MenuDisplayMode.preferenceKey)
+        preferences.set(mode != .flat, forKey: RightMenuMiniPreferences.isGroupedMenuEnabled)
         preferences.synchronize()
         RightMenuMiniPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
     }
 
-    @objc private func groupedLayoutSelected(_ sender: LayoutOptionCard) {
+    @objc private func actionRowClicked(_ sender: Any) {
         guard finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled) else {
             return
         }
-        preferences.set(true, forKey: RightMenuMiniPreferences.isGroupedMenuEnabled)
+        let key: String?
+        if let row = sender as? NSView, let id = row.identifier?.rawValue {
+            key = id
+        } else if let btn = sender as? NSButton, let id = btn.identifier?.rawValue {
+            key = id
+        } else {
+            key = nil
+        }
+        guard let actionKey = key else { return }
+
+        let newEnabled = !preferenceValue(for: actionKey)
+        preferences.set(newEnabled, forKey: actionKey)
         preferences.synchronize()
         RightMenuMiniPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
+    }
+
+    @objc private func preferenceCheckboxChanged(_ sender: NSButton) {
+        guard finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled) else {
+            if let key = sender.identifier?.rawValue {
+                sender.state = preferenceValue(for: key) ? .on : .off
+            }
+            return
+        }
+        guard let key = sender.identifier?.rawValue else { return }
+
+        let isEnabled = sender.state == .on
+        preferences.set(isEnabled, forKey: key)
+        preferences.synchronize()
+        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        refreshPreferenceControls()
+    }
+
+    private func updateActionRowAppearance(key: String, isEnabled: Bool, isServiceEnabled: Bool) {
+        guard let row = preferenceRows[key] else { return }
+        if let clickable = row as? ClickableRowView {
+            clickable.isEnabled = isServiceEnabled
+        }
+        if !isServiceEnabled {
+            row.alphaValue = 0.46
+            return
+        }
+        row.alphaValue = 1.0
+        let tile = preferenceIconTiles[key]
+        let titleLabel = rowTitleLabels[key]
+        let detailLabel = rowDetailLabels[key]
+
+        tile?.alphaValue = isEnabled ? 1.0 : 0.45
+        titleLabel?.textColor = isEnabled ? .labelColor : .secondaryLabelColor
+        detailLabel?.textColor = isEnabled ? .secondaryLabelColor : .tertiaryLabelColor
     }
 
     private func refreshPreferenceControls() {
         let menuEnabled = preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled)
-        let isGrouped = preferenceValue(for: RightMenuMiniPreferences.isGroupedMenuEnabled)
+        let isGrouped = menuDisplayMode != .flat
 
-        flatLayoutCard?.isSelected = !isGrouped
-        groupedLayoutCard?.isSelected = isGrouped
+        layoutSegmentControl?.selectedSegment = menuDisplayMode.segmentIndex
+        layoutSegmentControl?.isEnabled = finderExtensionEnabled && menuEnabled
+        reorderActionsButton?.isEnabled = finderExtensionEnabled && menuEnabled
 
-        if finderExtensionEnabled && menuEnabled {
-            flatLayoutCard?.alphaValue = 1.0
-            groupedLayoutCard?.alphaValue = 1.0
-        } else {
-            flatLayoutCard?.alphaValue = finderExtensionEnabled ? 0.48 : 0.46
-            groupedLayoutCard?.alphaValue = finderExtensionEnabled ? 0.48 : 0.46
-        }
-
-        guard !preferenceSwitches.isEmpty else {
+        guard !preferenceSwitches.isEmpty || !preferenceCheckboxes.isEmpty else {
             return
         }
 
         guard finderExtensionEnabled else {
+            reorderActionsButton?.isEnabled = false
             preferenceSwitches.values.forEach { toggle in
                 toggle.state = .off
                 toggle.isEnabled = false
             }
+            preferenceCheckboxes.values.forEach { checkbox in
+                checkbox.state = .off
+                checkbox.isEnabled = false
+            }
             preferenceRows.values.forEach { row in
                 row.alphaValue = 0.46
+                if let clickable = row as? ClickableRowView {
+                    clickable.isEnabled = false
+                }
             }
             statusDetailLabels[RightMenuMiniPreferences.isMenuEnabled]?.stringValue = AppText.localized("请先启用上方的 Finder 扩展授权", "Please enable Finder Extension permission above first")
             statusDetailLabels[RightMenuMiniPreferences.isGroupedMenuEnabled]?.stringValue = AppText.localized("授权后可设置", "Available after permission")
@@ -1925,6 +3168,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             toggle.isEnabled = true
         }
 
+        for (key, checkbox) in preferenceCheckboxes {
+            let isItemEnabled = preferenceValue(for: key)
+            checkbox.state = isItemEnabled ? .on : .off
+            checkbox.isEnabled = menuEnabled
+            updateActionRowAppearance(key: key, isEnabled: isItemEnabled, isServiceEnabled: menuEnabled)
+        }
+
         statusDetailLabels[RightMenuMiniPreferences.isMenuEnabled]?.stringValue = menuEnabled
             ? AppText.localized("已激活并显示在右键菜单中", "Activated and shown in context menu")
             : AppText.localized("已暂停（菜单项目已隐藏）", "Paused (menu items hidden)")
@@ -1932,14 +3182,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         statusDetailLabels[RightMenuMiniPreferences.isGroupedMenuEnabled]?.stringValue = isGrouped
             ? AppText.localized("折叠为子菜单", "Grouped in submenu")
-            : AppText.localized("直接显示三项功能", "Show actions directly")
+            : AppText.localized("直接显示已启用功能", "Show actions directly")
 
         dependentPreferenceKeys.forEach { key in
             preferenceSwitches[key]?.isEnabled = menuEnabled
-            preferenceRows[key]?.alphaValue = menuEnabled ? 1 : 0.48
+            if preferenceCheckboxes[key] == nil {
+                preferenceRows[key]?.alphaValue = menuEnabled ? 1 : 0.48
+            }
         }
 
         preferenceRows[RightMenuMiniPreferences.isMenuEnabled]?.alphaValue = 1
+        renderMenuPreview()
     }
 
     private func updateMenuPowerAppearance(isEnabled: Bool) {
@@ -1956,8 +3209,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private var dependentPreferenceKeys: [String] {
-        [
-            RightMenuMiniPreferences.isNewTextEnabled,
+        NewFileKind.allCases.map(\.preferenceKey) + [
             RightMenuMiniPreferences.isTerminalEnabled,
             RightMenuMiniPreferences.isCopyPathEnabled,
             RightMenuMiniPreferences.isGroupedMenuEnabled
@@ -2152,153 +3404,157 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private struct GitHubRelease: Decodable {
-        let tagName: String
-        let htmlURL: String
-
-        enum CodingKeys: String, CodingKey {
-            case tagName = "tag_name"
-            case htmlURL = "html_url"
-        }
-    }
-
-    private struct GitHubAPIError: Decodable {
-        let message: String?
+    private func refreshUpdateControls() {
+        updateCheckButton?.isEnabled = !isCheckingForUpdates
+        updateCheckButton?.title = isCheckingForUpdates
+            ? AppText.localized("检查中…", "Checking…") : AppText.localized("检查", "Check")
+        updateStatusLabel?.stringValue = isCheckingForUpdates
+            ? AppText.localized("正在检查 GitHub Releases…", "Checking GitHub Releases…")
+            : AppText.localized("可检查最新版本与发布日志", "Check latest version and release notes")
     }
 
     @objc private func checkForUpdates() {
-        latestReleasePageURL = nil
-        updateDownloadAvailable = false
-        updateCheckButton?.title = AppText.localized("检查", "Check")
-        updateCheckButton?.action = #selector(checkForUpdates)
-        updateCheckButton?.isEnabled = false
-        updateStatusLabel?.stringValue = AppText.localized("正在检查 GitHub Releases...", "Checking GitHub Releases...")
+        if let releaseAlert {
+            releaseAlert.window.makeKeyAndOrderFront(nil)
+            return
+        }
+        guard !isCheckingForUpdates else { return }
+        isCheckingForUpdates = true
+        refreshUpdateControls()
+        performUpdateCheck()
+    }
 
-        let webURL = URL(string: "https://github.com/Goonwb/MenuWish/releases/latest")!
-        var request = URLRequest(url: webURL)
-        request.httpMethod = "GET"
+    private func performUpdateCheck(useWebFallback: Bool = false) {
+        let url = useWebFallback ? repositoryURL.appendingPathComponent("releases/latest") : latestReleaseAPIURL
+        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 20)
+        if useWebFallback { request.httpMethod = "HEAD" }
         request.setValue("MenuWish/\(currentVersionString)", forHTTPHeaderField: "User-Agent")
-
+        if !useWebFallback { request.setValue("application/vnd.github+json", forHTTPHeaderField: "Accept") }
         URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
             DispatchQueue.main.async {
-                guard let self else {
+                guard let self else { return }
+                if !useWebFallback, let response = response as? HTTPURLResponse,
+                   [403, 429].contains(response.statusCode) {
+                    self.performUpdateCheck(useWebFallback: true)
                     return
                 }
-
-                self.updateCheckButton?.isEnabled = true
-
                 if let error {
-                    self.updateStatusLabel?.stringValue = AppText.localized(
-                        "检查失败：\(error.localizedDescription)",
-                        "Check failed: \(error.localizedDescription)"
-                    )
+                    self.showUpdateFailure(error.localizedDescription)
                     return
                 }
-
-                guard let httpResponse = response as? HTTPURLResponse else {
-                    self.updateStatusLabel?.stringValue = AppText.localized(
-                        "无法连接 GitHub。",
-                        "Unable to connect to GitHub."
-                    )
+                guard let response = response as? HTTPURLResponse else {
+                    self.showUpdateFailure(AppText.localized("无法连接 GitHub。", "Unable to connect to GitHub."))
                     return
                 }
-
-                guard (200..<300).contains(httpResponse.statusCode) else {
-                    if httpResponse.statusCode == 404 {
-                        self.updateStatusLabel?.stringValue = AppText.localized(
-                            "还没有发布 Release。",
-                            "No GitHub release has been published yet."
-                        )
-                        return
+                do {
+                    let result = try useWebFallback
+                        ? UpdateChecker.resultFromRedirect(url: response.url, statusCode: response.statusCode, currentVersion: self.currentVersionString)
+                        : UpdateChecker.result(data: data ?? Data(), statusCode: response.statusCode, currentVersion: self.currentVersionString)
+                    if useWebFallback {
+                        self.fetchFallbackReleaseNotes(result)
+                    } else {
+                        self.finishUpdateCheck(result)
                     }
-
-                    self.updateStatusLabel?.stringValue = AppText.localized(
-                        "GitHub 返回 \(httpResponse.statusCode)，请稍后再试。",
-                        "GitHub returned \(httpResponse.statusCode). Please try again later."
-                    )
-                    return
-                }
-
-                guard let finalURL = httpResponse.url,
-                      finalURL.pathComponents.contains("tag")
-                else {
-                    self.updateStatusLabel?.stringValue = AppText.localized(
-                        "未找到最新版本信息。",
-                        "No release version information was found."
-                    )
-                    return
-                }
-
-                let tagName = finalURL.lastPathComponent
-                let latestVersion = self.normalizedVersion(tagName)
-                self.latestReleasePageURL = finalURL
-
-                if self.isVersion(latestVersion, newerThan: self.currentVersionString) {
-                    self.updateDownloadAvailable = true
-                    self.updateStatusLabel?.stringValue = AppText.localized(
-                        "发现新版本 \(tagName)，可前往 GitHub 下载。",
-                        "New version \(tagName) is available on GitHub."
-                    )
-                    self.updateCheckButton?.title = AppText.localized("前往下载最新版本", "Download Latest")
-                    self.updateCheckButton?.action = #selector(self.openLatestReleaseOrRepository)
-                } else {
-                    self.updateDownloadAvailable = false
-                    self.updateStatusLabel?.stringValue = AppText.localized(
-                        "已是最新版本：\(self.versionDescription)",
-                        "You are up to date: \(self.versionDescription)"
-                    )
+                } catch UpdateCheckError.httpStatus(let code) {
+                    let message = [403, 429].contains(code)
+                        ? AppText.localized("GitHub 暂时限制了请求，请稍后再试。", "GitHub is limiting requests. Please try again later.")
+                        : AppText.localized("GitHub 返回 \(code)，请稍后再试。", "GitHub returned \(code). Please try again later.")
+                    self.showUpdateFailure(message)
+                } catch {
+                    self.showUpdateFailure(AppText.localized("无法读取有效的版本信息，请稍后再试。", "Unable to read valid release information. Please try again later."))
                 }
             }
         }.resume()
+    }
+
+    private func fetchFallbackReleaseNotes(_ result: UpdateCheckResult) {
+        let release: ReleaseDetails
+        let updateAvailable: Bool
+        switch result {
+        case let .available(details): release = details; updateAvailable = true
+        case let .upToDate(details): release = details; updateAvailable = false
+        case .noRelease: finishUpdateCheck(result); return
+        }
+        let request = URLRequest(url: repositoryURL.appendingPathComponent("releases.atom"),
+            cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10)
+        URLSession.shared.dataTask(with: request) { [weak self] data, response, error in
+            let notes = error == nil && (response as? HTTPURLResponse)?.statusCode == 200
+                ? data.flatMap { UpdateChecker.notesFromFeed(data: $0, releasePage: release.page) } : nil
+            let details = ReleaseDetails(version: release.version, page: release.page, notes: notes)
+            DispatchQueue.main.async {
+                self?.finishUpdateCheck(updateAvailable ? .available(details) : .upToDate(details))
+            }
+        }.resume()
+    }
+
+    private func finishUpdateCheck(_ result: UpdateCheckResult) {
+        isCheckingForUpdates = false
+        refreshUpdateControls()
+        switch result {
+        case let .available(release): showReleaseAlert(release, updateAvailable: true)
+        case let .upToDate(release): showReleaseAlert(release, updateAvailable: false)
+        case .noRelease:
+            showNativeAlert(title: AppText.localized("暂无可用更新", "No Release Available"),
+                message: AppText.localized("GitHub 上尚无可用的正式发布版本，请稍后再试。", "No stable release is available on GitHub yet. Please try again later."))
+        }
+    }
+
+    private func showUpdateFailure(_ message: String) {
+        isCheckingForUpdates = false
+        refreshUpdateControls()
+        showNativeAlert(title: AppText.localized("检查更新失败", "Unable to Check for Updates"), message: message, style: .warning)
+    }
+
+    private func showReleaseAlert(_ release: ReleaseDetails, updateAvailable: Bool) {
+        let alert = NSAlert()
+        alert.messageText = updateAvailable
+            ? AppText.localized("发现新版本", "A New Version Is Available")
+            : AppText.localized("已是最新版本", "You're Up to Date")
+        alert.informativeText = AppText.localized(
+            "当前版本：\(currentVersionString)\n最新正式版本：\(release.version)",
+            "Current version: \(currentVersionString)\nLatest stable release: \(release.version)")
+        alert.accessoryView = ReleaseNotesView(
+            release: release, isEnglish: AppText.isEnglish)
+        if updateAvailable {
+            alert.addButton(withTitle: AppText.localized("前往下载", "Download Update"))
+            alert.addButton(withTitle: AppText.localized("稍后", "Later"))
+        } else {
+            alert.addButton(withTitle: AppText.localized("好", "OK"))
+            alert.addButton(withTitle: AppText.localized("发布页面", "Release Page"))
+        }
+        NSApp.activate(ignoringOtherApps: true)
+        releaseAlert = alert
+        let completion: (NSApplication.ModalResponse) -> Void = { [weak self] result in
+            self?.releaseAlert = nil
+            if (updateAvailable && result == .alertFirstButtonReturn)
+                || (!updateAvailable && result == .alertSecondButtonReturn) {
+                NSWorkspace.shared.open(release.page)
+            }
+        }
+        if let window, window.isVisible {
+            alert.beginSheetModal(for: window, completionHandler: completion)
+        } else {
+            completion(alert.runModal())
+        }
+    }
+
+    private func showNativeAlert(title: String, message: String, style: NSAlert.Style = .informational) {
+        let alert = NSAlert()
+        alert.alertStyle = style
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: AppText.localized("好", "OK"))
+        NSApp.activate(ignoringOtherApps: true)
+        // Modal alerts also work when the settings window is closed during the request.
+        alert.runModal()
     }
 
     @objc private func openGitHubProfile() {
         NSWorkspace.shared.open(repositoryURL)
     }
 
-    @objc private func openLatestReleaseOrRepository() {
-        NSWorkspace.shared.open(latestReleasePageURL ?? repositoryURL)
-    }
-
     private var currentVersionString: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.0.0"
-    }
-
-    private func normalizedVersion(_ value: String) -> String {
-        var version = value.trimmingCharacters(in: .whitespacesAndNewlines)
-        if version.lowercased().hasPrefix("v") {
-            version.removeFirst()
-        }
-        return version
-    }
-
-    private func isVersion(_ candidate: String, newerThan current: String) -> Bool {
-        let candidateParts = versionParts(candidate)
-        let currentParts = versionParts(current)
-        let count = max(candidateParts.count, currentParts.count)
-
-        for index in 0..<count {
-            let candidatePart = index < candidateParts.count ? candidateParts[index] : 0
-            let currentPart = index < currentParts.count ? currentParts[index] : 0
-
-            if candidatePart > currentPart {
-                return true
-            }
-            if candidatePart < currentPart {
-                return false
-            }
-        }
-
-        return false
-    }
-
-    private func versionParts(_ value: String) -> [Int] {
-        normalizedVersion(value)
-            .split(separator: ".")
-            .map { part in
-                let numericPrefix = part.prefix { $0.isNumber }
-                return Int(numericPrefix) ?? 0
-            }
     }
 
     private func revealExtensionItemsSettings() {
@@ -2345,13 +3601,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let shouldQuitAfterHandling = components.queryItems?.first(where: { $0.name == "quit" })?.value == "1"
         let folderURL = URL(fileURLWithPath: folderPath)
 
-        switch action {
-        case "new-text":
-            createTextFile(in: folderURL)
-        case "terminal":
+        if let kind = NewFileKind.allCases.first(where: { $0.action == action }) {
+            createFile(kind, in: folderURL)
+        } else if action == "terminal" {
             openTerminal(in: folderURL)
-        default:
-            break
         }
 
         if shouldQuitAfterHandling {
@@ -2369,13 +3622,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
-    private func createTextFile(in folderURL: URL) {
-        let fileURL = nextAvailableTextFileURL(in: folderURL)
-
+    private func createFile(_ kind: NewFileKind, in folderURL: URL) {
         do {
-            try Data().write(to: fileURL, options: .withoutOverwriting)
+            _ = try NewFileCreator.create(kind, in: folderURL,
+                templates: Bundle.main.resourceURL?.appendingPathComponent("Templates"))
         } catch {
-            NSLog("RightMenuMini fallback new text failed: \(error.localizedDescription)")
+            showNativeAlert(
+                title: AppText.localized("无法新建文件", "Unable to Create File"),
+                message: AppText.localized("位置：", "Location: ") + folderURL.path + "\n\n" + error.localizedDescription,
+                style: .warning
+            )
         }
     }
 
@@ -2388,20 +3644,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             try task.run()
         } catch {
             NSLog("RightMenuMini fallback terminal failed: \(error.localizedDescription)")
-        }
-    }
-
-    private func nextAvailableTextFileURL(in folderURL: URL) -> URL {
-        let fileManager = FileManager.default
-        var index = 0
-
-        while true {
-            let suffix = index == 0 ? "" : " \(index + 1)"
-            let candidate = folderURL.appendingPathComponent("Untitled\(suffix).txt")
-            if !fileManager.fileExists(atPath: candidate.path) {
-                return candidate
-            }
-            index += 1
         }
     }
 
@@ -2426,6 +3668,7 @@ struct RightMenuMiniApplication {
 final class ClickableRowView: NSView {
     var action: Selector?
     weak var target: AnyObject?
+    var isEnabled: Bool = true
     private var isHovered = false
     private var isPressed = false
     private var trackingArea: NSTrackingArea?
@@ -2442,6 +3685,7 @@ final class ClickableRowView: NSView {
     }
 
     override func mouseEntered(with event: NSEvent) {
+        guard isEnabled else { return }
         isHovered = true
         needsDisplay = true
     }
@@ -2452,6 +3696,7 @@ final class ClickableRowView: NSView {
     }
 
     override func mouseDown(with event: NSEvent) {
+        guard isEnabled else { return }
         isPressed = true
         needsDisplay = true
     }
@@ -2460,8 +3705,13 @@ final class ClickableRowView: NSView {
         isPressed = false
         needsDisplay = true
 
+        guard isEnabled else { return }
         let localPoint = convert(event.locationInWindow, from: nil)
         if bounds.contains(localPoint) {
+            if let checkbox = subviews.first(where: { $0 is NSButton }) as? NSButton,
+               checkbox.frame.contains(localPoint) {
+                return
+            }
             if let target, let action {
                 _ = target.perform(action, with: self)
             }
@@ -2470,6 +3720,7 @@ final class ClickableRowView: NSView {
 
     override func draw(_ rect: NSRect) {
         super.draw(rect)
+        guard isEnabled else { return }
         let isDark: Bool
         if let appearance = window?.effectiveAppearance {
             isDark = appearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
@@ -2491,184 +3742,229 @@ final class ClickableRowView: NSView {
     }
 }
 
+private final class FlippedDocumentView: NSView {
+    override var isFlipped: Bool { true }
+}
+
+
+/// The entire header handles dragging, including its label and grip.
 @MainActor
-final class LayoutOptionCard: NSView {
-    var action: Selector?
-    weak var target: AnyObject?
-    var isSelected = false {
-        didSet {
-            updateAppearance()
-        }
+private final class CategoryDragHeaderView: NSView {
+    let category: MenuCategory
+    weak var groupView: NSView?
+    var onKeyboardMove: ((Int) -> Bool)?
+    private var mouseDownPoint: NSPoint?
+    private var dragDocument: CategoryReorderDocumentView? {
+        enclosingScrollView?.documentView as? CategoryReorderDocumentView
     }
 
-    private var isHovered = false
-    private var isPressed = false
-    private var trackingArea: NSTrackingArea?
-
-    private let iconTile = NSView()
-    private let iconView = NSImageView()
-    private let titleLabel = NSTextField(labelWithString: "")
-    private let detailLabel = NSTextField(labelWithString: "")
-
-    init(symbol: String, title: String, detail: String) {
+    init(category: MenuCategory) {
+        self.category = category
         super.init(frame: .zero)
-        translatesAutoresizingMaskIntoConstraints = false
-        wantsLayer = true
-        layer?.cornerRadius = 10
-        layer?.cornerCurve = .continuous
-        layer?.borderWidth = 1.0
-
-        iconTile.translatesAutoresizingMaskIntoConstraints = false
-        iconTile.wantsLayer = true
-        iconTile.layer?.cornerRadius = 8
-        iconTile.layer?.cornerCurve = .continuous
-
-        if let icon = MenuWishAssets.image(named: symbol, size: NSSize(width: 18, height: 18)) {
-            iconView.image = icon
-        } else {
-            iconView.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
-            iconView.symbolConfiguration = .init(pointSize: 16, weight: .semibold)
-        }
-        iconView.translatesAutoresizingMaskIntoConstraints = false
-        iconTile.addSubview(iconView)
-
-        titleLabel.font = .systemFont(ofSize: 12.5, weight: .bold)
-        titleLabel.textColor = .labelColor
-        titleLabel.lineBreakMode = .byTruncatingTail
-        titleLabel.maximumNumberOfLines = 1
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        detailLabel.font = .systemFont(ofSize: 10.5)
-        detailLabel.textColor = .secondaryLabelColor
-        detailLabel.lineBreakMode = .byTruncatingTail
-        detailLabel.maximumNumberOfLines = 1
-        detailLabel.translatesAutoresizingMaskIntoConstraints = false
-
-        let textStack = NSStackView(views: [titleLabel, detailLabel])
-        textStack.orientation = .vertical
-        textStack.alignment = .leading
-        textStack.spacing = 2
-        textStack.translatesAutoresizingMaskIntoConstraints = false
-
-        addSubview(iconTile)
-        addSubview(textStack)
-
-        titleLabel.stringValue = title
-        detailLabel.stringValue = detail
-
-        NSLayoutConstraint.activate([
-            iconTile.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 12),
-            iconTile.centerYAnchor.constraint(equalTo: centerYAnchor),
-            iconTile.widthAnchor.constraint(equalToConstant: 32),
-            iconTile.heightAnchor.constraint(equalToConstant: 32),
-
-            iconView.centerXAnchor.constraint(equalTo: iconTile.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: iconTile.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 18),
-            iconView.heightAnchor.constraint(equalToConstant: 18),
-
-            textStack.leadingAnchor.constraint(equalTo: iconTile.trailingAnchor, constant: 10),
-            textStack.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8),
-            textStack.centerYAnchor.constraint(equalTo: centerYAnchor)
-        ])
+        setAccessibilityElement(true)
+        setAccessibilityRole(.group)
+        focusRingType = .exterior
     }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    override var acceptsFirstResponder: Bool { true }
+    override func becomeFirstResponder() -> Bool {
+        focusRingType = .exterior
+        return super.becomeFirstResponder()
     }
-
-    func updateText(title: String, detail: String) {
-        titleLabel.stringValue = title
-        detailLabel.stringValue = detail
-        iconView.image?.accessibilityDescription = title
-    }
-
-    override func updateTrackingAreas() {
-        super.updateTrackingAreas()
-        if let trackingArea {
-            removeTrackingArea(trackingArea)
-        }
-        let options: NSTrackingArea.Options = [.mouseEnteredAndExited, .activeInActiveApp, .assumeInside]
-        let area = NSTrackingArea(rect: bounds, options: options, owner: self, userInfo: nil)
-        addTrackingArea(area)
-        self.trackingArea = area
-    }
-
-    override func mouseEntered(with event: NSEvent) {
-        isHovered = true
-        updateAppearance()
-    }
-
-    override func mouseExited(with event: NSEvent) {
-        isHovered = false
-        updateAppearance()
-    }
+    override func hitTest(_ point: NSPoint) -> NSView? { super.hitTest(point) == nil ? nil : self }
+    override func resetCursorRects() { addCursorRect(bounds, cursor: .openHand) }
+    override func drawFocusRingMask() { NSBezierPath(roundedRect: bounds.insetBy(dx: 5, dy: 3), xRadius: 5, yRadius: 5).fill() }
+    override var focusRingMaskBounds: NSRect { bounds }
 
     override func mouseDown(with event: NSEvent) {
-        isPressed = true
-        updateAppearance()
+        window?.makeFirstResponder(self)
+        focusRingType = .none
+        mouseDownPoint = event.locationInWindow
     }
-
+    override func mouseDragged(with event: NSEvent) {
+        guard let start = mouseDownPoint, let group = groupView, let document = dragDocument else { return }
+        let point = event.locationInWindow
+        guard hypot(point.x - start.x, point.y - start.y) > 4 else { return }
+        document.beginDrag(category: category, group: group, start: start)
+        document.updateDrag(at: point)
+    }
     override func mouseUp(with event: NSEvent) {
-        isPressed = false
-        updateAppearance()
+        mouseDownPoint = nil
+        dragDocument?.finishDrag(at: event.locationInWindow)
+    }
+    override func keyDown(with event: NSEvent) {
+        if event.keyCode == 53, dragDocument?.isDragging == true {
+            mouseDownPoint = nil
+            dragDocument?.cancelDrag()
+        } else if event.modifierFlags.contains(.option), [125, 126].contains(event.keyCode) {
+            _ = onKeyboardMove?(event.keyCode == 126 ? -1 : 1)
+        } else { super.keyDown(with: event) }
+    }
+}
 
-        let localPoint = convert(event.locationInWindow, from: nil)
-        if bounds.contains(localPoint) {
-            if let target, let action {
-                _ = target.perform(action, with: self)
+/// Keep reordering local to this sheet so dragging never exports data to another app.
+@MainActor
+private final class CategoryReorderDocumentView: NSView {
+    var groups: [(category: MenuCategory, view: NSView)] = []
+    var onMove: ((MenuCategory, Int) -> Void)?
+    private let indicator = NSView()
+    private let floatingGroup = NSImageView()
+    private var draggingCategory: MenuCategory?
+    private weak var draggingGroup: NSView?
+    private var pointerOffset = NSPoint.zero
+    private var pointerInWindow = NSPoint.zero
+    private var scrollTimer: Timer?
+    private var collapsedRows: [(view: NSView, wasHidden: Bool)] = []
+    private var dragSpacer: NSView?
+    private var originalScrollOrigin: NSPoint?
+    var isDragging: Bool { draggingCategory != nil }
+    override var isFlipped: Bool { true }
+
+    override init(frame frameRect: NSRect) {
+        super.init(frame: frameRect)
+        indicator.wantsLayer = true
+        indicator.layer?.backgroundColor = NSColor.controlAccentColor.cgColor
+        indicator.layer?.cornerRadius = 1
+        indicator.layer?.zPosition = 20
+        indicator.isHidden = true
+        addSubview(indicator)
+        floatingGroup.wantsLayer = true
+        floatingGroup.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
+        floatingGroup.layer?.cornerRadius = 8
+        floatingGroup.layer?.shadowOpacity = 0.18
+        floatingGroup.layer?.shadowRadius = 8
+        floatingGroup.layer?.zPosition = 10
+        floatingGroup.alphaValue = 0.85
+        floatingGroup.isHidden = true
+        addSubview(floatingGroup)
+    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    func clearDropIndicator() { indicator.isHidden = true }
+
+    func beginDrag(category: MenuCategory, group: NSView, start: NSPoint) {
+        guard !isDragging, let header = group.subviews.first as? CategoryDragHeaderView,
+              let bitmap = header.bitmapImageRepForCachingDisplay(in: header.bounds) else { return }
+        header.cacheDisplay(in: header.bounds, to: bitmap)
+        let image = NSImage(size: header.bounds.size)
+        image.addRepresentation(bitmap)
+        floatingGroup.image = image
+        floatingGroup.frame = convert(header.bounds, from: header)
+        let point = convert(start, from: nil)
+        pointerOffset = NSPoint(x: point.x - floatingGroup.frame.minX, y: point.y - floatingGroup.frame.minY)
+        draggingCategory = category
+        draggingGroup = group
+        collapseCategoriesForDrag()
+        group.alphaValue = 0.25
+        floatingGroup.isHidden = false
+        NSCursor.closedHand.push()
+        let timer = Timer(timeInterval: 0.05, repeats: true) { [weak self] _ in
+            MainActor.assumeIsolated { self?.scrollDuringDrag() }
+        }
+        RunLoop.main.add(timer, forMode: .common)
+        scrollTimer = timer
+    }
+
+    private func collapseCategoriesForDrag() {
+        guard let list = groups.first?.view.superview as? NSStackView else { return }
+        originalScrollOrigin = enclosingScrollView?.contentView.bounds.origin
+        let originalHeight = list.bounds.height
+        for (_, view) in groups {
+            guard let group = view as? NSStackView else { continue }
+            group.detachesHiddenViews = true
+            for row in group.arrangedSubviews where !(row is CategoryDragHeaderView) {
+                collapsedRows.append((row, row.isHidden))
+                row.isHidden = true
             }
+        }
+        // Keep the document's scroll extent stable while all category bodies fold.
+        // The pointer and floating header can then stay anywhere in the list area.
+        let headersHeight = groups.reduce(CGFloat.zero) { total, entry in
+            total + ((entry.view.subviews.first as? CategoryDragHeaderView)?.bounds.height ?? 0)
+        }
+        let spacer = NSView()
+        spacer.translatesAutoresizingMaskIntoConstraints = false
+        spacer.heightAnchor.constraint(equalToConstant: max(0, originalHeight - headersHeight)).isActive = true
+        list.addArrangedSubview(spacer)
+        dragSpacer = spacer
+        layoutSubtreeIfNeeded()
+        if let scroll = enclosingScrollView {
+            scroll.contentView.scroll(to: .zero)
+            scroll.reflectScrolledClipView(scroll.contentView)
         }
     }
 
-    func updateAppearance() {
-        let isDark = NSApp.effectiveAppearance.bestMatch(from: [.darkAqua, .aqua]) == .darkAqua
-
-        // Colors base
-        let accent = NSColor.controlAccentColor
-        let cardBgColor = isDark
-            ? NSColor(white: 0.14, alpha: 1.0)
-            : NSColor(white: 0.98, alpha: 1.0)
-        let unselectedBorderColor = isDark
-            ? NSColor(white: 1.0, alpha: 0.08)
-            : NSColor(white: 0.0, alpha: 0.06)
-
-        if isSelected {
-            layer?.backgroundColor = accent.withAlphaComponent(isDark ? 0.12 : 0.06).cgColor
-            layer?.borderColor = accent.cgColor
-            layer?.borderWidth = 1.5
-
-            iconTile.layer?.backgroundColor = accent.withAlphaComponent(isDark ? 0.20 : 0.10).cgColor
-            iconView.contentTintColor = accent
-        } else {
-            layer?.borderWidth = 1.0
-            layer?.borderColor = unselectedBorderColor.cgColor
-
-            if isPressed {
-                layer?.backgroundColor = isDark
-                    ? NSColor(white: 0.11, alpha: 1.0).cgColor
-                    : NSColor(white: 0.93, alpha: 1.0).cgColor
-            } else if isHovered {
-                layer?.backgroundColor = isDark
-                    ? NSColor(white: 0.17, alpha: 1.0).cgColor
-                    : NSColor(white: 0.96, alpha: 1.0).cgColor
-            } else {
-                layer?.backgroundColor = cardBgColor.cgColor
-            }
-
-            let iconColor = isDark ? NSColor.white.withAlphaComponent(0.7) : NSColor.black.withAlphaComponent(0.6)
-            iconTile.layer?.backgroundColor = isDark ? NSColor.white.withAlphaComponent(0.08).cgColor : NSColor.black.withAlphaComponent(0.04).cgColor
-            iconView.contentTintColor = iconColor
+    private func restoreCategoriesAfterDrag() {
+        dragSpacer?.removeFromSuperview()
+        dragSpacer = nil
+        for (row, wasHidden) in collapsedRows { row.isHidden = wasHidden }
+        collapsedRows.removeAll()
+        layoutSubtreeIfNeeded()
+        if let origin = originalScrollOrigin, let scroll = enclosingScrollView {
+            var bounds = scroll.contentView.bounds
+            bounds.origin = origin
+            scroll.contentView.scroll(to: scroll.contentView.constrainBoundsRect(bounds).origin)
+            scroll.reflectScrolledClipView(scroll.contentView)
         }
+        originalScrollOrigin = nil
     }
 
-    override func viewDidChangeEffectiveAppearance() {
-        super.viewDidChangeEffectiveAppearance()
-        updateAppearance()
+    private func target(at point: NSPoint) -> (Int, CGFloat)? {
+        guard let category = draggingCategory,
+              let current = groups.firstIndex(where: { $0.category == category }) else { return nil }
+        let others = groups.filter { $0.category != category }
+        let index = others.firstIndex { convert($0.view.bounds, from: $0.view).midY > point.y } ?? others.count
+        guard index != current else { return nil }
+        let edge: CGFloat
+        if index < others.count { edge = convert(others[index].view.bounds, from: others[index].view).minY }
+        else if let last = others.last { edge = convert(last.view.bounds, from: last.view).maxY }
+        else { return nil }
+        return (index, edge)
     }
 
-    override func viewDidMoveToWindow() {
-        super.viewDidMoveToWindow()
-        updateAppearance()
+    func updateDrag(at windowPoint: NSPoint) {
+        guard isDragging else { return }
+        pointerInWindow = windowPoint
+        let point = convert(windowPoint, from: nil)
+        floatingGroup.setFrameOrigin(NSPoint(x: 4, y: point.y - pointerOffset.y))
+        guard visibleRect.contains(point), let (_, edge) = target(at: point) else { clearDropIndicator(); return }
+        indicator.frame = NSRect(x: 8, y: min(max(1, edge - 1), bounds.height - 3), width: max(0, bounds.width - 16), height: 2)
+        indicator.isHidden = false
+    }
+
+    private func scrollDuringDrag() {
+        guard isDragging, let scroll = enclosingScrollView else { return }
+        let point = convert(pointerInWindow, from: nil)
+        let visible = visibleRect
+        guard point.x >= visible.minX, point.x <= visible.maxX,
+              point.y >= visible.minY - 24, point.y <= visible.maxY + 24 else { return }
+        let delta: CGFloat = point.y < visible.minY + 28 ? -10 : (point.y > visible.maxY - 28 ? 10 : 0)
+        guard delta != 0 else { return }
+        let clip = scroll.contentView
+        var targetBounds = clip.bounds
+        targetBounds.origin.y += delta
+        clip.scroll(to: clip.constrainBoundsRect(targetBounds).origin)
+        scroll.reflectScrolledClipView(clip)
+        updateDrag(at: pointerInWindow)
+    }
+
+    func finishDrag(at windowPoint: NSPoint) {
+        guard let category = draggingCategory else { return }
+        let point = convert(windowPoint, from: nil)
+        let index = visibleRect.contains(point) ? target(at: point)?.0 : nil
+        cancelDrag()
+        if let index { onMove?(category, index) }
+    }
+
+    func cancelDrag() {
+        scrollTimer?.invalidate()
+        scrollTimer = nil
+        if isDragging { NSCursor.pop() }
+        draggingCategory = nil
+        draggingGroup?.alphaValue = 1
+        draggingGroup = nil
+        restoreCategoriesAfterDrag()
+        floatingGroup.isHidden = true
+        floatingGroup.image = nil
+        clearDropIndicator()
     }
 }
