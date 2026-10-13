@@ -4,6 +4,6 @@ DerivedData/
 *.xcuserstate
 xcuserdata/
 .DS_Store
-RightMenuMini/Resources/RightMenuMini-image2-*-original.png
-RightMenuMini/Resources/RightMenuMini-image2-original.png
-!RightMenuMini/Resources/RightMenuMini-image2-final-original.png
+MenuWish/Resources/MenuWish-image2-*-original.png
+MenuWish/Resources/MenuWish-image2-original.png
+!MenuWish/Resources/MenuWish-image2-final-original.png

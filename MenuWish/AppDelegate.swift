@@ -1,7 +1,7 @@
 import AppKit
 import Carbon
 
-private enum RightMenuMiniPreferences {
+private enum MenuWishPreferences {
     static let suiteName = "com.codex.RightMenuMini.shared"
     static let isMenuEnabled = "isMenuEnabled"
     static let isTerminalEnabled = "isTerminalEnabled"
@@ -88,7 +88,7 @@ private enum RightMenuMiniPreferences {
                 )
                 try data.write(to: url, options: .atomic)
             } catch {
-                NSLog("RightMenuMini preferences mirror failed: \(error.localizedDescription)")
+                NSLog("MenuWish preferences mirror failed: \(error.localizedDescription)")
             }
         }
     }
@@ -111,14 +111,14 @@ private enum RightMenuMiniPreferences {
 
 private enum AppText {
     static var languageMode: String {
-        RightMenuMiniPreferences.string(RightMenuMiniPreferences.languageMode, in: RightMenuMiniPreferences.store())
+        MenuWishPreferences.string(MenuWishPreferences.languageMode, in: MenuWishPreferences.store())
     }
 
     static var isEnglish: Bool {
         switch languageMode {
-        case RightMenuMiniPreferences.englishValue:
+        case MenuWishPreferences.englishValue:
             return true
-        case RightMenuMiniPreferences.chineseValue:
+        case MenuWishPreferences.chineseValue:
             return false
         default:
             let preferredLanguage = Locale.preferredLanguages.first?.lowercased() ?? ""
@@ -168,7 +168,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var statusMenuAuthorizationItem: NSMenuItem?
     private var receivedActionURL = false
-    private let preferences = RightMenuMiniPreferences.store()
+    private let preferences = MenuWishPreferences.store()
     private var currentTab: SidebarTab = .general
     private var reorderSheet: NSWindow?
     private var draftLayout = MenuLayout()
@@ -179,14 +179,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var sheetResetButton: NSButton?
     private var collapsedActionCategories: Set<MenuCategory> {
         get {
-            Set((preferences.string(forKey: RightMenuMiniPreferences.collapsedActionCategories) ?? "")
+            Set((preferences.string(forKey: MenuWishPreferences.collapsedActionCategories) ?? "")
                 .split(separator: ",").compactMap { MenuCategory(rawValue: String($0)) })
         }
         set {
             preferences.set(newValue.map(\.rawValue).sorted().joined(separator: ","),
-                forKey: RightMenuMiniPreferences.collapsedActionCategories)
+                forKey: MenuWishPreferences.collapsedActionCategories)
             preferences.synchronize()
-            RightMenuMiniPreferences.mirrorValues(from: preferences)
+            MenuWishPreferences.mirrorValues(from: preferences)
         }
     }
     private var contentContainer: NSView?
@@ -237,8 +237,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
-        preferences.register(defaults: RightMenuMiniPreferences.registeredDefaults)
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        preferences.register(defaults: MenuWishPreferences.registeredDefaults)
+        MenuWishPreferences.mirrorValues(from: preferences)
         registerFinderExtension()
         applyAppearancePreference()
         if let bundledIcon = bundledApplicationIconImage() {
@@ -412,7 +412,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if NSApp.activationPolicy() != policy && !NSApp.setActivationPolicy(policy) {
             preferences.set(appliedDisplayLocation.rawValue, forKey: AppDisplayLocation.preferenceKey)
             preferences.synchronize()
-            RightMenuMiniPreferences.mirrorValues(from: preferences)
+            MenuWishPreferences.mirrorValues(from: preferences)
             configureStatusItem()
             updatePopup(AppDisplayLocation.preferenceKey, items: displayLocationItems)
             showNativeAlert(title: AppText.localized("无法更改应用入口", "Unable to Change App Access"),
@@ -719,11 +719,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             symbol: "character.bubble",
             title: AppText.localized("语言", "Language"),
             detail: AppText.localized("选择 App 和 Finder 菜单显示语言", "Choose the app and Finder menu language"),
-            key: RightMenuMiniPreferences.languageMode,
+            key: MenuWishPreferences.languageMode,
             items: [
-                (RightMenuMiniPreferences.systemValue, AppText.localized("跟随系统", "System")),
-                (RightMenuMiniPreferences.chineseValue, "简体中文"),
-                (RightMenuMiniPreferences.englishValue, "English")
+                (MenuWishPreferences.systemValue, AppText.localized("跟随系统", "System")),
+                (MenuWishPreferences.chineseValue, "简体中文"),
+                (MenuWishPreferences.englishValue, "English")
             ],
             action: #selector(languageSelectionChanged(_:))
         )
@@ -731,11 +731,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             symbol: "circle.lefthalf.filled",
             title: AppText.localized("外观", "Appearance"),
             detail: AppText.localized("选择浅色、深色或跟随系统", "Choose light, dark, or system appearance"),
-            key: RightMenuMiniPreferences.appearanceMode,
+            key: MenuWishPreferences.appearanceMode,
             items: [
-                (RightMenuMiniPreferences.systemValue, AppText.localized("跟随系统", "System")),
-                (RightMenuMiniPreferences.lightValue, AppText.localized("浅色", "Light")),
-                (RightMenuMiniPreferences.darkValue, AppText.localized("深色", "Dark"))
+                (MenuWishPreferences.systemValue, AppText.localized("跟随系统", "System")),
+                (MenuWishPreferences.lightValue, AppText.localized("浅色", "Light")),
+                (MenuWishPreferences.darkValue, AppText.localized("深色", "Dark"))
             ],
             action: #selector(appearanceSelectionChanged(_:))
         )
@@ -894,12 +894,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private var menuDisplayMode: MenuDisplayMode {
-        MenuDisplayMode.resolved(RightMenuMiniPreferences.string(MenuDisplayMode.preferenceKey, in: preferences),
-            legacyGrouped: preferenceValue(for: RightMenuMiniPreferences.isGroupedMenuEnabled))
+        MenuDisplayMode.resolved(MenuWishPreferences.string(MenuDisplayMode.preferenceKey, in: preferences),
+            legacyGrouped: preferenceValue(for: MenuWishPreferences.isGroupedMenuEnabled))
     }
 
     private var actionLayout: MenuLayout {
-        MenuLayout(serialized: RightMenuMiniPreferences.string(MenuLayout.preferenceKey, in: preferences))
+        MenuLayout(serialized: MenuWishPreferences.string(MenuLayout.preferenceKey, in: preferences))
     }
 
     // MARK: - Reorder Modal Sheet
@@ -1317,7 +1317,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             preferences.set(enabled, forKey: action.preferenceKey)
         }
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
         reloadActionsPreservingScroll()
         window.endSheet(sheet, returnCode: .OK)
@@ -1483,7 +1483,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func saveActionLayout(_ layout: MenuLayout) {
         preferences.set(layout.serialized, forKey: MenuLayout.preferenceKey)
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
         reloadActionsPreservingScroll()
     }
 
@@ -1894,7 +1894,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             popup.lastItem?.representedObject = item.value
         }
 
-        let selectedValue = RightMenuMiniPreferences.string(key, in: preferences)
+        let selectedValue = MenuWishPreferences.string(key, in: preferences)
         if let selectedItem = popup.itemArray.first(where: { $0.representedObject as? String == selectedValue }) {
             popup.select(selectedItem)
         }
@@ -2010,7 +2010,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let row = NSView()
         row.translatesAutoresizingMaskIntoConstraints = false
 
-        let key = RightMenuMiniPreferences.isMenuEnabled
+        let key = MenuWishPreferences.isMenuEnabled
         let color = NSColor.systemBlue
 
         let iconTile = NSView()
@@ -2298,7 +2298,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         toggle.translatesAutoresizingMaskIntoConstraints = false
         toggle.toolTip = title
         toggle.state = preferenceValue(for: key) ? .on : .off
-        toggle.isEnabled = finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled)
+        toggle.isEnabled = finderExtensionEnabled && preferenceValue(for: MenuWishPreferences.isMenuEnabled)
         preferenceSwitches[key] = toggle
         preferenceRows[key] = row
         statusDetailLabels[key] = detailLabel
@@ -2634,7 +2634,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         previewModePill?.layer?.backgroundColor = NSColor.controlAccentColor.withAlphaComponent(usesDarkAppearance ? 0.18 : 0.09).cgColor
 
         let isGrouped = menuDisplayMode != .flat
-        let isServiceEnabled = finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled)
+        let isServiceEnabled = finderExtensionEnabled && preferenceValue(for: MenuWishPreferences.isMenuEnabled)
 
         previewModeLabel?.stringValue = menuDisplayMode.title(isEnglish: AppText.isEnglish)
 
@@ -2912,15 +2912,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         preferences.set(value, forKey: key)
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
     }
 
     private func applyAppearancePreference() {
         let appearance: NSAppearance?
-        switch RightMenuMiniPreferences.string(RightMenuMiniPreferences.appearanceMode, in: preferences) {
-        case RightMenuMiniPreferences.lightValue:
+        switch MenuWishPreferences.string(MenuWishPreferences.appearanceMode, in: preferences) {
+        case MenuWishPreferences.lightValue:
             appearance = NSAppearance(named: .aqua)
-        case RightMenuMiniPreferences.darkValue:
+        case MenuWishPreferences.darkValue:
             appearance = NSAppearance(named: .darkAqua)
         default:
             appearance = nil
@@ -2960,30 +2960,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         refreshUpdateControls()
         localizedButtons["github"]?.title = AppText.localized("前往", "Visit")
 
-        rowTitleLabels[RightMenuMiniPreferences.isMenuEnabled]?.stringValue = AppText.localized("右键菜单服务", "Context Menu Service")
-        rowTitleLabels[RightMenuMiniPreferences.languageMode]?.stringValue = AppText.localized("语言", "Language")
-        rowDetailLabels[RightMenuMiniPreferences.languageMode]?.stringValue = AppText.localized("选择 App 和 Finder 菜单显示语言", "Choose the app and Finder menu language")
-        rowTitleLabels[RightMenuMiniPreferences.appearanceMode]?.stringValue = AppText.localized("外观", "Appearance")
-        rowDetailLabels[RightMenuMiniPreferences.appearanceMode]?.stringValue = AppText.localized("选择浅色、深色或跟随系统", "Choose light, dark, or system appearance")
+        rowTitleLabels[MenuWishPreferences.isMenuEnabled]?.stringValue = AppText.localized("右键菜单服务", "Context Menu Service")
+        rowTitleLabels[MenuWishPreferences.languageMode]?.stringValue = AppText.localized("语言", "Language")
+        rowDetailLabels[MenuWishPreferences.languageMode]?.stringValue = AppText.localized("选择 App 和 Finder 菜单显示语言", "Choose the app and Finder menu language")
+        rowTitleLabels[MenuWishPreferences.appearanceMode]?.stringValue = AppText.localized("外观", "Appearance")
+        rowDetailLabels[MenuWishPreferences.appearanceMode]?.stringValue = AppText.localized("选择浅色、深色或跟随系统", "Choose light, dark, or system appearance")
         rowTitleLabels["version"]?.stringValue = AppText.localized("当前版本", "Current Version")
         rowTitleLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("应用入口", "App Access")
         rowDetailLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("选择在菜单栏或 Dock 中显示 MenuWish", "Show MenuWish in the menu bar or Dock")
         updatePopup(AppDisplayLocation.preferenceKey, items: displayLocationItems)
 
         updatePopup(
-            RightMenuMiniPreferences.languageMode,
+            MenuWishPreferences.languageMode,
             items: [
-                (RightMenuMiniPreferences.systemValue, AppText.localized("跟随系统", "System")),
-                (RightMenuMiniPreferences.chineseValue, "简体中文"),
-                (RightMenuMiniPreferences.englishValue, "English")
+                (MenuWishPreferences.systemValue, AppText.localized("跟随系统", "System")),
+                (MenuWishPreferences.chineseValue, "简体中文"),
+                (MenuWishPreferences.englishValue, "English")
             ]
         )
         updatePopup(
-            RightMenuMiniPreferences.appearanceMode,
+            MenuWishPreferences.appearanceMode,
             items: [
-                (RightMenuMiniPreferences.systemValue, AppText.localized("跟随系统", "System")),
-                (RightMenuMiniPreferences.lightValue, AppText.localized("浅色", "Light")),
-                (RightMenuMiniPreferences.darkValue, AppText.localized("深色", "Dark"))
+                (MenuWishPreferences.systemValue, AppText.localized("跟随系统", "System")),
+                (MenuWishPreferences.lightValue, AppText.localized("浅色", "Light")),
+                (MenuWishPreferences.darkValue, AppText.localized("深色", "Dark"))
             ]
         )
 
@@ -2991,10 +2991,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             rowTitleLabels[kind.preferenceKey]?.stringValue = kind.title(isEnglish: AppText.isEnglish)
             rowDetailLabels[kind.preferenceKey]?.stringValue = kind.detail(isEnglish: AppText.isEnglish)
         }
-        rowTitleLabels[RightMenuMiniPreferences.isTerminalEnabled]?.stringValue = AppText.localized("进入终端", "Open Terminal")
-        rowDetailLabels[RightMenuMiniPreferences.isTerminalEnabled]?.stringValue = AppText.localized("从当前位置打开 Terminal", "Open Terminal at this location")
-        rowTitleLabels[RightMenuMiniPreferences.isCopyPathEnabled]?.stringValue = AppText.localized("拷贝路径", "Copy Path")
-        rowDetailLabels[RightMenuMiniPreferences.isCopyPathEnabled]?.stringValue = AppText.localized("复制所选项目或当前文件夹路径", "Copy selected paths or current folder")
+        rowTitleLabels[MenuWishPreferences.isTerminalEnabled]?.stringValue = AppText.localized("进入终端", "Open Terminal")
+        rowDetailLabels[MenuWishPreferences.isTerminalEnabled]?.stringValue = AppText.localized("从当前位置打开 Terminal", "Open Terminal at this location")
+        rowTitleLabels[MenuWishPreferences.isCopyPathEnabled]?.stringValue = AppText.localized("拷贝路径", "Copy Path")
+        rowDetailLabels[MenuWishPreferences.isCopyPathEnabled]?.stringValue = AppText.localized("复制所选项目或当前文件夹路径", "Copy selected paths or current folder")
 
         applyAuthorizationStatus(finderExtensionEnabled)
     }
@@ -3004,7 +3004,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let selectedValue = RightMenuMiniPreferences.string(key, in: preferences)
+        let selectedValue = MenuWishPreferences.string(key, in: preferences)
         popup.removeAllItems()
         items.forEach { item in
             popup.addItem(withTitle: item.title)
@@ -3055,26 +3055,26 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         preferences.set(sender.state == .on, forKey: key)
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
     }
 
     @objc private func layoutSegmentChanged(_ sender: NSSegmentedControl) {
-        guard finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled) else {
+        guard finderExtensionEnabled && preferenceValue(for: MenuWishPreferences.isMenuEnabled) else {
             sender.selectedSegment = menuDisplayMode.segmentIndex
             return
         }
         guard MenuDisplayMode.allCases.indices.contains(sender.selectedSegment) else { return }
         let mode = MenuDisplayMode.allCases[sender.selectedSegment]
         preferences.set(mode.rawValue, forKey: MenuDisplayMode.preferenceKey)
-        preferences.set(mode != .flat, forKey: RightMenuMiniPreferences.isGroupedMenuEnabled)
+        preferences.set(mode != .flat, forKey: MenuWishPreferences.isGroupedMenuEnabled)
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
     }
 
     @objc private func actionRowClicked(_ sender: Any) {
-        guard finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled) else {
+        guard finderExtensionEnabled && preferenceValue(for: MenuWishPreferences.isMenuEnabled) else {
             return
         }
         let key: String?
@@ -3090,12 +3090,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let newEnabled = !preferenceValue(for: actionKey)
         preferences.set(newEnabled, forKey: actionKey)
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
     }
 
     @objc private func preferenceCheckboxChanged(_ sender: NSButton) {
-        guard finderExtensionEnabled && preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled) else {
+        guard finderExtensionEnabled && preferenceValue(for: MenuWishPreferences.isMenuEnabled) else {
             if let key = sender.identifier?.rawValue {
                 sender.state = preferenceValue(for: key) ? .on : .off
             }
@@ -3106,7 +3106,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let isEnabled = sender.state == .on
         preferences.set(isEnabled, forKey: key)
         preferences.synchronize()
-        RightMenuMiniPreferences.mirrorValues(from: preferences)
+        MenuWishPreferences.mirrorValues(from: preferences)
         refreshPreferenceControls()
     }
 
@@ -3130,7 +3130,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func refreshPreferenceControls() {
-        let menuEnabled = preferenceValue(for: RightMenuMiniPreferences.isMenuEnabled)
+        let menuEnabled = preferenceValue(for: MenuWishPreferences.isMenuEnabled)
         let isGrouped = menuDisplayMode != .flat
 
         layoutSegmentControl?.selectedSegment = menuDisplayMode.segmentIndex
@@ -3157,8 +3157,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                     clickable.isEnabled = false
                 }
             }
-            statusDetailLabels[RightMenuMiniPreferences.isMenuEnabled]?.stringValue = AppText.localized("请先启用上方的 Finder 扩展授权", "Please enable Finder Extension permission above first")
-            statusDetailLabels[RightMenuMiniPreferences.isGroupedMenuEnabled]?.stringValue = AppText.localized("授权后可设置", "Available after permission")
+            statusDetailLabels[MenuWishPreferences.isMenuEnabled]?.stringValue = AppText.localized("请先启用上方的 Finder 扩展授权", "Please enable Finder Extension permission above first")
+            statusDetailLabels[MenuWishPreferences.isGroupedMenuEnabled]?.stringValue = AppText.localized("授权后可设置", "Available after permission")
             updateMenuPowerAppearance(isEnabled: false)
             return
         }
@@ -3175,12 +3175,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             updateActionRowAppearance(key: key, isEnabled: isItemEnabled, isServiceEnabled: menuEnabled)
         }
 
-        statusDetailLabels[RightMenuMiniPreferences.isMenuEnabled]?.stringValue = menuEnabled
+        statusDetailLabels[MenuWishPreferences.isMenuEnabled]?.stringValue = menuEnabled
             ? AppText.localized("已激活并显示在右键菜单中", "Activated and shown in context menu")
             : AppText.localized("已暂停（菜单项目已隐藏）", "Paused (menu items hidden)")
         updateMenuPowerAppearance(isEnabled: menuEnabled)
 
-        statusDetailLabels[RightMenuMiniPreferences.isGroupedMenuEnabled]?.stringValue = isGrouped
+        statusDetailLabels[MenuWishPreferences.isGroupedMenuEnabled]?.stringValue = isGrouped
             ? AppText.localized("折叠为子菜单", "Grouped in submenu")
             : AppText.localized("直接显示已启用功能", "Show actions directly")
 
@@ -3191,15 +3191,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             }
         }
 
-        preferenceRows[RightMenuMiniPreferences.isMenuEnabled]?.alphaValue = 1
+        preferenceRows[MenuWishPreferences.isMenuEnabled]?.alphaValue = 1
         renderMenuPreview()
     }
 
     private func updateMenuPowerAppearance(isEnabled: Bool) {
         let color: NSColor = isEnabled ? .systemGreen : .systemRed
-        preferenceIconViews[RightMenuMiniPreferences.isMenuEnabled]?.contentTintColor = color
+        preferenceIconViews[MenuWishPreferences.isMenuEnabled]?.contentTintColor = color
 
-        let tile = preferenceIconTiles[RightMenuMiniPreferences.isMenuEnabled]
+        let tile = preferenceIconTiles[MenuWishPreferences.isMenuEnabled]
         tile?.layer?.backgroundColor = tintBackgroundColor(for: color).cgColor
         tile?.layer?.shadowColor = color.cgColor
         tile?.layer?.shadowOffset = .zero
@@ -3210,14 +3210,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     private var dependentPreferenceKeys: [String] {
         NewFileKind.allCases.map(\.preferenceKey) + [
-            RightMenuMiniPreferences.isTerminalEnabled,
-            RightMenuMiniPreferences.isCopyPathEnabled,
-            RightMenuMiniPreferences.isGroupedMenuEnabled
+            MenuWishPreferences.isTerminalEnabled,
+            MenuWishPreferences.isCopyPathEnabled,
+            MenuWishPreferences.isGroupedMenuEnabled
         ]
     }
 
     private func preferenceValue(for key: String) -> Bool {
-        RightMenuMiniPreferences.bool(key, in: preferences)
+        MenuWishPreferences.bool(key, in: preferences)
     }
 
     @objc private func openExtensionSettings() {
@@ -3230,7 +3230,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func registerFinderExtension() {
-        guard let extensionURL = Bundle.main.builtInPlugInsURL?.appendingPathComponent("RightMenuMiniFinderExtension.appex") else {
+        guard let extensionURL = Bundle.main.builtInPlugInsURL?.appendingPathComponent("MenuWishFinderExtension.appex") else {
             return
         }
 
@@ -3307,7 +3307,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private func finderExtensionIsEnabled() -> Bool {
         let entries = finderExtensionEntries()
 
-        if let extensionURL = Bundle.main.builtInPlugInsURL?.appendingPathComponent("RightMenuMiniFinderExtension.appex"),
+        if let extensionURL = Bundle.main.builtInPlugInsURL?.appendingPathComponent("MenuWishFinderExtension.appex"),
            let currentEntry = entries.first(where: { entry in
                entry.identifier == extensionBundleIdentifier && sameFilePath(entry.url, extensionURL)
            }) {
@@ -3391,7 +3391,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
             let data = pipe.fileHandleForReading.readDataToEndOfFile()
             return String(data: data, encoding: .utf8) ?? ""
         } catch {
-            NSLog("RightMenuMini pluginkit query failed: \(error.localizedDescription)")
+            NSLog("MenuWish pluginkit query failed: \(error.localizedDescription)")
             return ""
         }
     }
@@ -3643,7 +3643,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         do {
             try task.run()
         } catch {
-            NSLog("RightMenuMini fallback terminal failed: \(error.localizedDescription)")
+            NSLog("MenuWish fallback terminal failed: \(error.localizedDescription)")
         }
     }
 
@@ -3655,7 +3655,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
 @main
 @MainActor
-struct RightMenuMiniApplication {
+struct MenuWishApplication {
     static func main() {
         let app = NSApplication.shared
         let delegate = AppDelegate()

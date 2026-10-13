@@ -71,15 +71,17 @@ The script builds the Release app, copies it to `/Applications`, registers the F
 
 ## Build Manually
 
+The Xcode project and app target are named MenuWish. Bundle IDs, the shared preferences domain, and the internal URL scheme retain their original identifiers for compatibility with existing installations and settings.
+
 ```zsh
 xcodebuild \
-  -project RightMenuMini.xcodeproj \
-  -scheme RightMenuMini \
+  -project MenuWish.xcodeproj \
+  -scheme MenuWish \
   -configuration Release \
   -derivedDataPath build \
   build
 
-open build/Build/Products/Release/RightMenuMini.app
+open build/Build/Products/Release/MenuWish.app
 ```
 
 ## First-Time Permission

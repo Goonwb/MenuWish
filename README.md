@@ -75,15 +75,17 @@ chmod +x Scripts/install-local.sh
 
 ## 手动编译
 
+Xcode 项目与构建目标统一命名为 MenuWish。为兼容已有安装与设置，Bundle ID、共享偏好域及内部 URL 协议保留原标识。
+
 ```zsh
 xcodebuild \
-  -project RightMenuMini.xcodeproj \
-  -scheme RightMenuMini \
+  -project MenuWish.xcodeproj \
+  -scheme MenuWish \
   -configuration Release \
   -derivedDataPath build \
   build
 
-open build/Build/Products/Release/RightMenuMini.app
+open build/Build/Products/Release/MenuWish.app
 ```
 
 ## 首次授权

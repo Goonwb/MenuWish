@@ -25,7 +25,7 @@ After a Release build, verify monochrome TIFF transport and light/dark cache iso
 
 ```zsh
 xcrun swiftc -swift-version 6 -module-cache-path build/ModuleCache.noindex Shared/MenuWishAssets.swift Tests/FinderIconChecks.swift -o build/finder-icon-checks
-build/finder-icon-checks build/Build/Products/Release/RightMenuMiniFinderExtension.appex
+build/finder-icon-checks build/Build/Products/Release/MenuWishFinderExtension.appex
 ```
 
 These checks do not simulate Finder highlight backgrounds or replace visual theme testing.

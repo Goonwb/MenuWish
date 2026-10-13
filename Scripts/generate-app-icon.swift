@@ -4,9 +4,9 @@ import ImageIO
 import UniformTypeIdentifiers
 
 private let root = URL(fileURLWithPath: FileManager.default.currentDirectoryPath)
-private let sourcePNG = root.appendingPathComponent("RightMenuMini/Resources/RightMenuMini-source.png")
-private let assetDirectory = root.appendingPathComponent("RightMenuMini/Assets.xcassets/AppIcon.appiconset")
-private let resourceIconsetDirectory = root.appendingPathComponent("RightMenuMini/Resources/RightMenuMini.iconset")
+private let sourcePNG = root.appendingPathComponent("MenuWish/Resources/MenuWish-source.png")
+private let assetDirectory = root.appendingPathComponent("MenuWish/Assets.xcassets/AppIcon.appiconset")
+private let resourceIconsetDirectory = root.appendingPathComponent("MenuWish/Resources/MenuWish.iconset")
 
 private struct IconImage {
     let filename: String
@@ -32,7 +32,7 @@ private func loadSourceImage() throws -> CGImage {
         let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
     else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 1,
             userInfo: [NSLocalizedDescriptionKey: "Unable to load \(sourcePNG.path)"]
         )
@@ -52,7 +52,7 @@ private func pngData(from image: CGImage, size: Int) throws -> Data {
         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
     ) else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 2,
             userInfo: [NSLocalizedDescriptionKey: "Unable to create \(size)x\(size) bitmap context"]
         )
@@ -64,7 +64,7 @@ private func pngData(from image: CGImage, size: Int) throws -> Data {
 
     guard let resized = context.makeImage() else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 3,
             userInfo: [NSLocalizedDescriptionKey: "Unable to create resized image"]
         )
@@ -73,7 +73,7 @@ private func pngData(from image: CGImage, size: Int) throws -> Data {
     let data = NSMutableData()
     guard let destination = CGImageDestinationCreateWithData(data, UTType.png.identifier as CFString, 1, nil) else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 4,
             userInfo: [NSLocalizedDescriptionKey: "Unable to create PNG destination"]
         )
@@ -82,7 +82,7 @@ private func pngData(from image: CGImage, size: Int) throws -> Data {
     CGImageDestinationAddImage(destination, resized, nil)
     guard CGImageDestinationFinalize(destination) else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 5,
             userInfo: [NSLocalizedDescriptionKey: "Unable to write PNG data"]
         )
@@ -105,4 +105,4 @@ for icon in iconImages {
     try write(data, to: resourceIconsetDirectory.appendingPathComponent(icon.filename))
 }
 
-print("Generated app icons from RightMenuMini-source.png.")
+print("Generated app icons from MenuWish-source.png.")

@@ -1,7 +1,7 @@
 import AppKit
 import FinderSync
 
-private enum RightMenuMiniPreferences {
+private enum MenuWishPreferences {
     static let suiteName = "com.codex.RightMenuMini.shared"
     static let isMenuEnabled = "isMenuEnabled"
     static let isTerminalEnabled = "isTerminalEnabled"
@@ -150,14 +150,14 @@ private enum RightMenuMiniPreferences {
 
 private enum MenuText {
     static var languageMode: String {
-        RightMenuMiniPreferences.resolvedString(RightMenuMiniPreferences.languageMode)
+        MenuWishPreferences.resolvedString(MenuWishPreferences.languageMode)
     }
 
     static var isEnglish: Bool {
         switch languageMode {
-        case RightMenuMiniPreferences.englishValue:
+        case MenuWishPreferences.englishValue:
             return true
-        case RightMenuMiniPreferences.chineseValue:
+        case MenuWishPreferences.chineseValue:
             return false
         default:
             let preferredLanguage = Locale.preferredLanguages.first?.lowercased() ?? ""
@@ -185,15 +185,15 @@ final class FinderSync: FIFinderSync {
             return nil
         }
 
-        let preferences = RightMenuMiniPreferences.resolvedValues()
-        guard RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isMenuEnabled, in: preferences) else {
+        let preferences = MenuWishPreferences.resolvedValues()
+        guard MenuWishPreferences.bool(MenuWishPreferences.isMenuEnabled, in: preferences) else {
             return nil
         }
 
         let mode = MenuDisplayMode.resolved(
-            RightMenuMiniPreferences.resolvedString(MenuDisplayMode.preferenceKey),
-            legacyGrouped: RightMenuMiniPreferences.bool(RightMenuMiniPreferences.isGroupedMenuEnabled, in: preferences))
-        let layout = MenuLayout(serialized: RightMenuMiniPreferences.resolvedString(MenuLayout.preferenceKey))
+            MenuWishPreferences.resolvedString(MenuDisplayMode.preferenceKey),
+            legacyGrouped: MenuWishPreferences.bool(MenuWishPreferences.isGroupedMenuEnabled, in: preferences))
+        let layout = MenuLayout(serialized: MenuWishPreferences.resolvedString(MenuLayout.preferenceKey))
         let groups = layout.menuGroups(mode: mode, values: preferences)
         guard !groups.isEmpty else { return nil }
         let menu = NSMenu(title: "MenuWish")
@@ -335,7 +335,7 @@ final class FinderSync: FIFinderSync {
 
         NSWorkspace.shared.open([actionURL], withApplicationAt: appURL, configuration: configuration) { _, error in
             if let error {
-                NSLog("RightMenuMini action failed: \(action), \(error.localizedDescription)")
+                NSLog("MenuWish action failed: \(action), \(error.localizedDescription)")
             }
         }
     }

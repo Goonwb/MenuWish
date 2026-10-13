@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		0A0A00000000000000000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000011 /* AppDelegate.swift */; };
 		0A0A00000000000000000002 /* FinderSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000012 /* FinderSync.swift */; };
-		0A0A00000000000000000003 /* RightMenuMiniFinderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000022 /* RightMenuMiniFinderExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0A0A00000000000000000003 /* MenuWishFinderExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000022 /* MenuWishFinderExtension.appex */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0A0A00000000000000000004 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000031 /* Cocoa.framework */; };
 		0A0A00000000000000000005 /* FinderSync.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000032 /* FinderSync.framework */; };
 		0A0A00000000000000000006 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0A0A00000000000000000019 /* Assets.xcassets */; };
@@ -36,7 +36,7 @@
 			containerPortal = 0A0A000000000000000000F0 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = 0A0A000000000000000000A2;
-			remoteInfo = RightMenuMiniFinderExtension;
+			remoteInfo = MenuWishFinderExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -47,7 +47,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				0A0A00000000000000000003 /* RightMenuMiniFinderExtension.appex in Embed App Extensions */,
+				0A0A00000000000000000003 /* MenuWishFinderExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,7 +59,7 @@
 		0A0A00000000000000000012 /* FinderSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FinderSync.swift; sourceTree = "<group>"; };
 		0A0A00000000000000000013 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0A0A00000000000000000014 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0A0A00000000000000000018 /* RightMenuMiniFinderExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RightMenuMiniFinderExtension.entitlements; sourceTree = "<group>"; };
+		0A0A00000000000000000018 /* MenuWishFinderExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MenuWishFinderExtension.entitlements; sourceTree = "<group>"; };
 		0A0A00000000000000000019 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0A0A0000000000000000001A /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		0A0A0000000000000000001B /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
@@ -68,17 +68,17 @@
 		0A0A00000000000000000015 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		0A0A00000000000000000016 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		0A0A00000000000000000017 /* install-local.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = "install-local.sh"; sourceTree = "<group>"; };
-		0A0A00000000000000000021 /* RightMenuMini.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RightMenuMini.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		0A0A00000000000000000022 /* RightMenuMiniFinderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = RightMenuMiniFinderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A0A00000000000000000021 /* MenuWish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MenuWish.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		0A0A00000000000000000022 /* MenuWishFinderExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MenuWishFinderExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		0A0A00000000000000000031 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		0A0A00000000000000000032 /* FinderSync.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FinderSync.framework; path = System/Library/Frameworks/FinderSync.framework; sourceTree = SDKROOT; };
 		0B0B00000000000000000101 /* NewFileKind.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Shared/NewFileKind.swift"; sourceTree = SOURCE_ROOT; };
-		0B0B00000000000000000102 /* NewFileCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RightMenuMini/NewFileCreator.swift"; sourceTree = SOURCE_ROOT; };
-		0B0B00000000000000000103 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RightMenuMini/UpdateChecker.swift"; sourceTree = SOURCE_ROOT; };
-		0B0B00000000000000000104 /* Templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "RightMenuMini/Resources/Templates"; sourceTree = SOURCE_ROOT; };
-		0B0B00000000000000000105 /* ReleaseNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightMenuMini/ReleaseNotesView.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000102 /* NewFileCreator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuWish/NewFileCreator.swift"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000103 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MenuWish/UpdateChecker.swift"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000104 /* Templates */ = {isa = PBXFileReference; lastKnownFileType = folder; path = "MenuWish/Resources/Templates"; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000105 /* ReleaseNotesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuWish/ReleaseNotesView.swift; sourceTree = SOURCE_ROOT; };
 		0B0B00000000000000000106 /* MenuLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/MenuLayout.swift; sourceTree = SOURCE_ROOT; };
-		0B0B00000000000000000107 /* AppDisplayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RightMenuMini/AppDisplayLocation.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000107 /* AppDisplayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuWish/AppDisplayLocation.swift; sourceTree = SOURCE_ROOT; };
 		0B0B00000000000000000108 /* MenuWishAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/MenuWishAssets.swift; sourceTree = SOURCE_ROOT; };
 		0B0B00000000000000000109 /* MenuIcons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shared/MenuIcons; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
@@ -106,8 +106,8 @@
 		0A0A00000000000000000081 = {
 			isa = PBXGroup;
 			children = (
-				0A0A00000000000000000083 /* RightMenuMini */,
-				0A0A00000000000000000084 /* RightMenuMiniFinderExtension */,
+				0A0A00000000000000000083 /* MenuWish */,
+				0A0A00000000000000000084 /* MenuWishFinderExtension */,
 				0A0A00000000000000000085 /* Scripts */,
 				0A0A00000000000000000086 /* Frameworks */,
 				0A0A00000000000000000082 /* Products */,
@@ -128,13 +128,13 @@
 		0A0A00000000000000000082 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				0A0A00000000000000000021 /* RightMenuMini.app */,
-				0A0A00000000000000000022 /* RightMenuMiniFinderExtension.appex */,
+				0A0A00000000000000000021 /* MenuWish.app */,
+				0A0A00000000000000000022 /* MenuWishFinderExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		0A0A00000000000000000083 /* RightMenuMini */ = {
+		0A0A00000000000000000083 /* MenuWish */ = {
 			isa = PBXGroup;
 			children = (
 				0A0A00000000000000000011 /* AppDelegate.swift */,
@@ -142,18 +142,18 @@
 				0A0A00000000000000000019 /* Assets.xcassets */,
 				0A0A0000000000000000001C /* InfoPlist.strings */,
 			);
-			path = RightMenuMini;
+			path = MenuWish;
 			sourceTree = "<group>";
 		};
-		0A0A00000000000000000084 /* RightMenuMiniFinderExtension */ = {
+		0A0A00000000000000000084 /* MenuWishFinderExtension */ = {
 			isa = PBXGroup;
 			children = (
 				0A0A00000000000000000012 /* FinderSync.swift */,
 				0A0A00000000000000000014 /* Info.plist */,
-				0A0A00000000000000000018 /* RightMenuMiniFinderExtension.entitlements */,
+				0A0A00000000000000000018 /* MenuWishFinderExtension.entitlements */,
 				0A0A0000000000000000001D /* InfoPlist.strings */,
 			);
-			path = RightMenuMiniFinderExtension;
+			path = MenuWishFinderExtension;
 			sourceTree = "<group>";
 		};
 		0A0A00000000000000000085 /* Scripts */ = {
@@ -176,9 +176,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		0A0A000000000000000000A1 /* RightMenuMini */ = {
+		0A0A000000000000000000A1 /* MenuWish */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0A0A000000000000000000D1 /* Build configuration list for PBXNativeTarget "RightMenuMini" */;
+			buildConfigurationList = 0A0A000000000000000000D1 /* Build configuration list for PBXNativeTarget "MenuWish" */;
 			buildPhases = (
 				0A0A00000000000000000051 /* Sources */,
 				0A0A00000000000000000071 /* Frameworks */,
@@ -190,14 +190,14 @@
 			dependencies = (
 				0A0A00000000000000000042 /* PBXTargetDependency */,
 			);
-			name = RightMenuMini;
-			productName = RightMenuMini;
-			productReference = 0A0A00000000000000000021 /* RightMenuMini.app */;
+			name = MenuWish;
+			productName = MenuWish;
+			productReference = 0A0A00000000000000000021 /* MenuWish.app */;
 			productType = "com.apple.product-type.application";
 		};
-		0A0A000000000000000000A2 /* RightMenuMiniFinderExtension */ = {
+		0A0A000000000000000000A2 /* MenuWishFinderExtension */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 0A0A000000000000000000D2 /* Build configuration list for PBXNativeTarget "RightMenuMiniFinderExtension" */;
+			buildConfigurationList = 0A0A000000000000000000D2 /* Build configuration list for PBXNativeTarget "MenuWishFinderExtension" */;
 			buildPhases = (
 				0A0A00000000000000000052 /* Sources */,
 				0A0A00000000000000000072 /* Frameworks */,
@@ -207,9 +207,9 @@
 			);
 			dependencies = (
 			);
-			name = RightMenuMiniFinderExtension;
-			productName = RightMenuMiniFinderExtension;
-			productReference = 0A0A00000000000000000022 /* RightMenuMiniFinderExtension.appex */;
+			name = MenuWishFinderExtension;
+			productName = MenuWishFinderExtension;
+			productReference = 0A0A00000000000000000022 /* MenuWishFinderExtension.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
@@ -230,7 +230,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0A0A000000000000000000D0 /* Build configuration list for PBXProject "RightMenuMini" */;
+			buildConfigurationList = 0A0A000000000000000000D0 /* Build configuration list for PBXProject "MenuWish" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -245,8 +245,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				0A0A000000000000000000A1 /* RightMenuMini */,
-				0A0A000000000000000000A2 /* RightMenuMiniFinderExtension */,
+				0A0A000000000000000000A1 /* MenuWish */,
+				0A0A000000000000000000A2 /* MenuWishFinderExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -327,7 +327,7 @@
 /* Begin PBXTargetDependency section */
 		0A0A00000000000000000042 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 0A0A000000000000000000A2 /* RightMenuMiniFinderExtension */;
+			target = 0A0A000000000000000000A2 /* MenuWishFinderExtension */;
 			targetProxy = 0A0A00000000000000000041 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -458,7 +458,7 @@
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = RightMenuMini/Info.plist;
+				INFOPLIST_FILE = MenuWish/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Personal utility.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -466,7 +466,7 @@
 				);
 				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini;
-				PRODUCT_NAME = RightMenuMini;
+				PRODUCT_NAME = MenuWish;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Debug;
@@ -483,7 +483,7 @@
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = RightMenuMini/Info.plist;
+				INFOPLIST_FILE = MenuWish/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Personal utility.";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -491,7 +491,7 @@
 				);
 				MARKETING_VERSION = 0.1.4;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini;
-				PRODUCT_NAME = RightMenuMini;
+				PRODUCT_NAME = MenuWish;
 				SWIFT_VERSION = 6.0;
 			};
 			name = Release;
@@ -500,7 +500,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = RightMenuMiniFinderExtension/RightMenuMiniFinderExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MenuWishFinderExtension/MenuWishFinderExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -508,7 +508,7 @@
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = RightMenuMiniFinderExtension/Info.plist;
+				INFOPLIST_FILE = MenuWishFinderExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -526,7 +526,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CODE_SIGN_ENTITLEMENTS = RightMenuMiniFinderExtension/RightMenuMiniFinderExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = MenuWishFinderExtension/MenuWishFinderExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -534,7 +534,7 @@
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = RightMenuMiniFinderExtension/Info.plist;
+				INFOPLIST_FILE = MenuWishFinderExtension/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -551,7 +551,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0A0A000000000000000000D0 /* Build configuration list for PBXProject "RightMenuMini" */ = {
+		0A0A000000000000000000D0 /* Build configuration list for PBXProject "MenuWish" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A0A000000000000000000B1 /* Debug */,
@@ -560,7 +560,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0A0A000000000000000000D1 /* Build configuration list for PBXNativeTarget "RightMenuMini" */ = {
+		0A0A000000000000000000D1 /* Build configuration list for PBXNativeTarget "MenuWish" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A0A000000000000000000B3 /* Debug */,
@@ -569,7 +569,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		0A0A000000000000000000D2 /* Build configuration list for PBXNativeTarget "RightMenuMiniFinderExtension" */ = {
+		0A0A000000000000000000D2 /* Build configuration list for PBXNativeTarget "MenuWishFinderExtension" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				0A0A000000000000000000B5 /* Debug */,

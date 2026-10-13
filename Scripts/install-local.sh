@@ -3,17 +3,17 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 BUILD_DIR="$ROOT_DIR/build"
-BUILD_APP_NAME="RightMenuMini.app"
+BUILD_APP_NAME="MenuWish.app"
 INSTALL_APP_NAME="MenuWish.app"
 APP_PATH="$BUILD_DIR/Build/Products/Release/$BUILD_APP_NAME"
 INSTALL_PATH="/Applications/$INSTALL_APP_NAME"
 LEGACY_INSTALL_PATH="/Applications/RightMenuMini.app"
 EXTENSION_ID="com.codex.RightMenuMini.FinderExtension"
-EXTENSION_PATH="$INSTALL_PATH/Contents/PlugIns/RightMenuMiniFinderExtension.appex"
+EXTENSION_PATH="$INSTALL_PATH/Contents/PlugIns/MenuWishFinderExtension.appex"
 
 xcodebuild -quiet \
-  -project "$ROOT_DIR/RightMenuMini.xcodeproj" \
-  -scheme RightMenuMini \
+  -project "$ROOT_DIR/MenuWish.xcodeproj" \
+  -scheme MenuWish \
   -configuration Release \
   -derivedDataPath "$BUILD_DIR" \
   CODE_SIGN_IDENTITY="-" \
@@ -22,6 +22,8 @@ xcodebuild -quiet \
 
 /usr/bin/killall RightMenuMini || true
 /usr/bin/killall RightMenuMiniFinderExtension || true
+/usr/bin/killall MenuWish || true
+/usr/bin/killall MenuWishFinderExtension || true
 rm -rf "$INSTALL_PATH"
 rm -rf "$LEGACY_INSTALL_PATH"
 cp -R "$APP_PATH" "$INSTALL_PATH"
@@ -35,7 +37,7 @@ cp -R "$APP_PATH" "$INSTALL_PATH"
 done
 
 /usr/bin/pluginkit -a "$EXTENSION_PATH"
-/usr/bin/pluginkit -r "$APP_PATH/Contents/PlugIns/RightMenuMiniFinderExtension.appex" || true
+/usr/bin/pluginkit -r "$APP_PATH/Contents/PlugIns/MenuWishFinderExtension.appex" || true
 /System/Library/Frameworks/CoreServices.framework/Versions/Current/Frameworks/LaunchServices.framework/Versions/Current/Support/lsregister -u "$APP_PATH" || true
 open "$INSTALL_PATH"
 /usr/bin/killall Finder || true

@@ -31,7 +31,7 @@ private func loadImage(at url: URL) throws -> CGImage {
         let image = CGImageSourceCreateImageAtIndex(source, 0, nil)
     else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 1,
             userInfo: [NSLocalizedDescriptionKey: "Unable to load \(url.path)"]
         )
@@ -56,7 +56,7 @@ private func rgbaImage(from image: CGImage) throws -> RGBAImage {
         bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
     ) else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 2,
             userInfo: [NSLocalizedDescriptionKey: "Unable to create source bitmap"]
         )
@@ -201,7 +201,7 @@ private func cgImage(from image: RGBAImage) throws -> CGImage {
         )
     else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 3,
             userInfo: [NSLocalizedDescriptionKey: "Unable to create transparent source image"]
         )
@@ -220,7 +220,7 @@ private func writePNG(_ image: CGImage, to url: URL) throws {
         nil
     ) else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 4,
             userInfo: [NSLocalizedDescriptionKey: "Unable to create PNG destination"]
         )
@@ -229,7 +229,7 @@ private func writePNG(_ image: CGImage, to url: URL) throws {
     CGImageDestinationAddImage(destination, image, nil)
     guard CGImageDestinationFinalize(destination) else {
         throw NSError(
-            domain: "RightMenuMiniIcon",
+            domain: "MenuWishIcon",
             code: 5,
             userInfo: [NSLocalizedDescriptionKey: "Unable to write \(url.path)"]
         )
@@ -255,7 +255,7 @@ let bounds = alphaBounds(of: transparent).insetBy(dx: -4, dy: -4).intersection(
 
 guard let cropped = transparentImage.cropping(to: bounds) else {
     throw NSError(
-        domain: "RightMenuMiniIcon",
+        domain: "MenuWishIcon",
         code: 6,
         userInfo: [NSLocalizedDescriptionKey: "Unable to crop icon art"]
     )
@@ -272,7 +272,7 @@ guard let outputContext = CGContext(
     bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue | CGBitmapInfo.byteOrder32Big.rawValue
 ) else {
     throw NSError(
-        domain: "RightMenuMiniIcon",
+        domain: "MenuWishIcon",
         code: 7,
         userInfo: [NSLocalizedDescriptionKey: "Unable to create output bitmap"]
     )
@@ -294,7 +294,7 @@ outputContext.draw(cropped, in: targetRect)
 
 guard let outputImage = outputContext.makeImage() else {
     throw NSError(
-        domain: "RightMenuMiniIcon",
+        domain: "MenuWishIcon",
         code: 8,
         userInfo: [NSLocalizedDescriptionKey: "Unable to create output icon source"]
     )

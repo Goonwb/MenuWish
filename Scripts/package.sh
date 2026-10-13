@@ -4,14 +4,14 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 BUILD_DIR="$ROOT_DIR/build"
 DIST_DIR="$ROOT_DIR/dist"
-APP_NAME="RightMenuMini.app"
+APP_NAME="MenuWish.app"
 DIST_APP_NAME="MenuWish.app"
 APP_PATH="$BUILD_DIR/Build/Products/Release/$APP_NAME"
 
 echo "Building Release..."
 xcodebuild -quiet \
-  -project "$ROOT_DIR/RightMenuMini.xcodeproj" \
-  -scheme RightMenuMini \
+  -project "$ROOT_DIR/MenuWish.xcodeproj" \
+  -scheme MenuWish \
   -configuration Release \
   -derivedDataPath "$BUILD_DIR" \
   CODE_SIGN_IDENTITY="-" \

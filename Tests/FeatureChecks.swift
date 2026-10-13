@@ -9,7 +9,7 @@ struct FeatureChecks {
     static func main() throws {
         let fm = FileManager.default
         let root = URL(fileURLWithPath: CommandLine.arguments[1])
-        let templates = root.appendingPathComponent("RightMenuMini/Resources/Templates")
+        let templates = root.appendingPathComponent("MenuWish/Resources/Templates")
         let temporary = fm.temporaryDirectory.appendingPathComponent("MenuWish-check-\(UUID())")
         try fm.createDirectory(at: temporary, withIntermediateDirectories: true)
         defer { try? fm.removeItem(at: temporary) }
