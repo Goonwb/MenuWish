@@ -1,89 +1,79 @@
 <p align="center">
-  <img src="docs/images/menuwish-icon.png" width="112" alt="MenuWish icon">
+  <img src="docs/images/menuwish-icon.png" width="112" alt="MenuWish 图标">
 </p>
 
 <h1 align="center">MenuWish</h1>
 
 <p align="center">
-  <strong>Make your Finder right-click as you wish.</strong>
+  <strong>让 Finder 右键菜单，随你所愿。</strong>
 </p>
 
 <p align="center">
-  A lightweight macOS extension for New Text, Terminal &amp; Copy Path.
+  轻量开源的 Finder 菜单增强工具：新建文件、进入终端、拷贝路径。
 </p>
 
 <p align="center">
-  <strong>中文：</strong>轻量开源的 Mac Finder 菜单增强：新建文本、进入终端、拷贝路径。
-</p>
-
-<p align="center">
-  <a href="README.md">English</a>
-  |
-  <a href="README.zh-CN.md">中文</a>
+  中文 · <a href="README.en.md">English</a>
 </p>
 
 <p align="center">
   <a href="LICENSE">MIT License</a>
   ·
-  <a href="https://github.com/Goonwb">Author</a>
+  <a href="https://github.com/Goonwb">作者</a>
 </p>
 
-## Why MenuWish?
+## 功能
 
-Finder does not include a direct **New Text File** action in its context menu, while opening the current folder in Terminal or copying a full path often takes extra steps. MenuWish adds these focused shortcuts directly to the macOS Finder right-click menu through a native Finder Sync extension.
+通过原生 Finder Sync 扩展，为右键菜单添加常用操作：
 
-## Features
+- **新建文件**：文本、Markdown、Numbers 表格、Pages 文稿、Keynote 讲演。重名自动编号，不覆盖已有文件。
+- **进入终端**：在当前 Finder 位置打开 Terminal。
+- **拷贝路径**：复制所选项目路径；未选择项目时复制当前文件夹路径。
 
-MenuWish keeps the Finder context menu focused on these everyday actions:
+可按习惯配置：
 
-- **New Text**: create an empty `Untitled.txt` in the current Finder folder. Duplicate names are numbered automatically.
-- **New Markdown**: create an empty `Untitled.md`.
-- **New Numbers Spreadsheet / Pages Document / Keynote Presentation**: create native `.numbers`, `.pages`, and `.key` files from bundled blank templates, with automatic numbering for duplicate names.
-- **Open Terminal**: open Terminal at the current Finder location.
-- **Copy Path**: copy selected item paths, or copy the current folder path when nothing is selected.
+- **开关**：整体启停，或单独启用各项功能。
+- **布局**：平铺、合并为 MenuWish 子菜单，或按「新建文件」「常用工具」分类；空类目自动隐藏。
+- **排序**：调整功能顺序，拖动标题调整类目顺序；拖动时折叠，结束后展开。
+- **预览**：点击切换类目；与 Finder 统一使用单色图标，设置列表保留彩色。
+- **更新**：手动检查 GitHub Releases 更新，在应用内查看发布日志。
+- **偏好**：中文或英文、浅色或深色，均可跟随系统；应用入口可选仅菜单栏（默认）、仅 Dock 或两者。
 
-The app supports:
+## 界面预览
 
-- A master switch for the Finder context menu.
-- Individual switches for each action.
-- Menu display: Flat, Combined in one MenuWish submenu, or Categories with separate New Files and Tools submenus. Empty categories are hidden.
-- Action grouping and order: one card for New Files and Tools. Category mode supports dragging category headers and using arrows to reorder actions within each category; Flat and Combined keep the global action order. Click a category in the preview to inspect its submenu.
-- Manual update checking from GitHub Releases with native macOS result dialogs and scrollable release notes.
-- Language support: follows the system, with Simplified Chinese, Traditional Chinese, and English localization.
-- Appearance selection: System, Light, or Dark.
-- Display location: Menu Bar Only (default), Dock Only, or Menu Bar & Dock. Changes take effect immediately and do not disable Finder actions.
-
-## Screenshots
+### 通用设置
 
 <p align="center">
-  <img src="docs/images/general-en.webp" alt="MenuWish general settings" width="820">
+  <img src="docs/images/general-zh-CN.webp" alt="MenuWish 通用界面" width="820">
 </p>
+
+### 快捷功能与分类预览
 
 <p align="center">
-  <img src="docs/images/actions-en.webp" alt="MenuWish actions settings" width="820">
+  <img src="docs/images/actions-zh-CN.webp" alt="MenuWish 快捷功能界面" width="820">
 </p>
 
-## Requirements
+## 系统要求
 
-- macOS 13.0 or later
-- Xcode 15 or later for building from source
+- macOS 13.0 或更高版本
+- 如需从源码编译，需要 Xcode 15 或更高版本
 
-## Installer
+## 安装包
 
-Open the MenuWish `.dmg`, drag **MenuWish** into **Applications**, then launch it from Applications.
+从 [GitHub Releases](https://github.com/Goonwb/MenuWish/releases) 下载并打开 `.dmg`，将 **MenuWish** 拖入 **Applications（应用程序）** 后启动。
 
-Run `./Scripts/package.sh` to create `dist/MenuWish-<version>.dmg` and a ZIP fallback. Packaging requires Python 3.9 or later; the first run downloads pinned build dependencies into `build/package-venv`.
+源码中运行 `./Scripts/package.sh` 可生成 `dist/MenuWish-<版本>.dmg` 和 ZIP 备用包。首次打包需要联网；脚本会在 `build/package-venv` 中安装固定版本的打包依赖，需要 Python 3.9 或更高版本。
 
-## Install From Source
+## 从源码安装
 
 ```zsh
 chmod +x Scripts/install-local.sh
 ./Scripts/install-local.sh
 ```
 
-The script builds the Release app, copies it to `/Applications`, registers the Finder extension, and restarts Finder.
+脚本会编译 Release 版本，将 App 复制到 `/Applications`，注册 Finder 扩展并重启 Finder。
 
-## Build Manually
+## 手动编译
 
 ```zsh
 xcodebuild \
@@ -96,24 +86,20 @@ xcodebuild \
 open build/Build/Products/Release/RightMenuMini.app
 ```
 
-## First-Time Permission
+## 首次授权
 
-MenuWish uses Apple's Finder Sync extension mechanism. macOS requires users to enable Finder extensions manually:
+打开 MenuWish，点击 **初次授权**，在 **文件提供程序** 扩展弹窗中启用 **MenuWish**。
 
-1. Open MenuWish.
-2. Click **Authorize**.
-3. Enable **MenuWish** in the **File Provider** extension sheet.
+授权前功能开关不可用；授权后恢复默认或已保存的设置。
 
-Before permission is granted, all switches are shown as off and disabled. After permission is enabled, the app restores the default or saved settings.
+## 说明
 
-## Notes
+- 当前版本：`0.1.4`。
+- iWork 文件使用内置原生模板创建，无需启动对应应用；打开和编辑需要对应应用。模板由 26.3.1 创建，旧版兼容性未验证。
+- 当前分发版本尚未公证。其他用户安装时，可能需要在 macOS 安全设置中手动允许打开。
 
-- Current version: `0.1.4`.
-- Creating iWork files does not launch the corresponding app; opening and editing requires Numbers, Pages, or Keynote. Templates were created with version 26.3.1; compatibility with older iWork versions is not yet verified.
-- The distributed app is not notarized yet. Users may need to allow it manually in macOS security settings.
+## 许可证
 
-## License
+MenuWish 基于 [MIT License](LICENSE) 开源。
 
-MenuWish is released under the [MIT License](LICENSE).
-
-Action icons use the MIT-licensed [Hugeicons Stroke Rounded](https://github.com/hugeicons/hugeicons) set and a matching MenuWish Markdown icon. See [icon sources and attribution](Shared/MenuIcons/README.md).
+功能图标采用 MIT 许可的 [Hugeicons Stroke Rounded](https://github.com/hugeicons/hugeicons) 与同风格的 MenuWish Markdown 图标。详见[图标来源与署名](Shared/MenuIcons/README.md)。
