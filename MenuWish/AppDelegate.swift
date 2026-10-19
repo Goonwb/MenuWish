@@ -216,6 +216,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var updateCheckButton: NSButton?
     private var isCheckingForUpdates = false
     private var releaseAlert: NSAlert?
+    private var updateDownloadWindow: UpdateDownloadWindow?
     private var appliedDisplayLocation = AppDisplayLocation.menuBar
     private var versionBadge: NSView?
     private var versionBadgeLabel: NSTextField?
@@ -3414,6 +3415,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc private func checkForUpdates() {
+        if let updateDownloadWindow {
+            updateDownloadWindow.showWindow(nil)
+            updateDownloadWindow.window?.makeKeyAndOrderFront(nil)
+            return
+        }
         if let releaseAlert {
             releaseAlert.window.makeKeyAndOrderFront(nil)
             return
@@ -3516,7 +3522,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         alert.accessoryView = ReleaseNotesView(
             release: release, isEnglish: AppText.isEnglish)
         if updateAvailable {
-            alert.addButton(withTitle: AppText.localized("前往下载", "Download Update"))
+            alert.addButton(withTitle: release.installer == nil
+                ? AppText.localized("前往下载", "Open Download Page")
+                : AppText.localized("下载更新", "Download Update"))
             alert.addButton(withTitle: AppText.localized("稍后", "Later"))
         } else {
             alert.addButton(withTitle: AppText.localized("好", "OK"))
@@ -3526,8 +3534,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         releaseAlert = alert
         let completion: (NSApplication.ModalResponse) -> Void = { [weak self] result in
             self?.releaseAlert = nil
-            if (updateAvailable && result == .alertFirstButtonReturn)
-                || (!updateAvailable && result == .alertSecondButtonReturn) {
+            if updateAvailable && result == .alertFirstButtonReturn {
+                if let installer = release.installer, let self {
+                    let controller = UpdateDownloadWindow(release: release, installer: installer,
+                        isEnglish: AppText.isEnglish) { [weak self] in self?.updateDownloadWindow = nil }
+                    self.updateDownloadWindow = controller
+                    controller.start()
+                } else {
+                    NSWorkspace.shared.open(release.page)
+                }
+            } else if !updateAvailable && result == .alertSecondButtonReturn {
                 NSWorkspace.shared.open(release.page)
             }
         }

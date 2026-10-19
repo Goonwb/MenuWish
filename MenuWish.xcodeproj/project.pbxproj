@@ -28,6 +28,8 @@
 		0B0B00000000000000000211 /* MenuWishAssets.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000108; };
 		0B0B00000000000000000212 /* MenuIcons */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000109; };
 		0B0B00000000000000000213 /* MenuIcons */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000109; };
+		0B0B00000000000000000214 /* UpdateDownload.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000114; };
+		0B0B00000000000000000215 /* UpdateDownloadWindow.swift */ = {isa = PBXBuildFile; fileRef = 0B0B00000000000000000115; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -81,6 +83,8 @@
 		0B0B00000000000000000107 /* AppDisplayLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuWish/AppDisplayLocation.swift; sourceTree = SOURCE_ROOT; };
 		0B0B00000000000000000108 /* MenuWishAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shared/MenuWishAssets.swift; sourceTree = SOURCE_ROOT; };
 		0B0B00000000000000000109 /* MenuIcons */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Shared/MenuIcons; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000114 /* UpdateDownload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuWish/UpdateDownload.swift; sourceTree = SOURCE_ROOT; };
+		0B0B00000000000000000115 /* UpdateDownloadWindow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuWish/UpdateDownloadWindow.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -113,6 +117,8 @@
 				0A0A00000000000000000082 /* Products */,
 				0B0B00000000000000000101 /* NewFileKind.swift */,
 				0B0B00000000000000000102 /* NewFileCreator.swift */,
+				0B0B00000000000000000114 /* UpdateDownload.swift */,
+				0B0B00000000000000000115 /* UpdateDownloadWindow.swift */,
 				0B0B00000000000000000103 /* UpdateChecker.swift */,
 				0B0B00000000000000000104 /* Templates */,
 				0B0B00000000000000000105 /* ReleaseNotesView.swift */,
@@ -301,6 +307,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				0A0A00000000000000000001 /* AppDelegate.swift in Sources */,
+				0B0B00000000000000000214 /* UpdateDownload.swift */,
+				0B0B00000000000000000215 /* UpdateDownloadWindow.swift */,
 				0B0B00000000000000000203 /* UpdateChecker.swift */,
 				0B0B00000000000000000206 /* ReleaseNotesView.swift */,
 				0B0B00000000000000000202 /* NewFileCreator.swift */,
@@ -453,7 +461,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
@@ -478,7 +486,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
@@ -504,7 +512,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -530,7 +538,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 21;
+				CURRENT_PROJECT_VERSION = 22;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;

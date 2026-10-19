@@ -36,7 +36,7 @@ Make the menu your own:
 - **Layouts**: Flat, Combined in one MenuWish submenu, or Categories for New Files and Tools. Empty categories are hidden.
 - **Ordering**: reorder actions and drag category headers. Categories collapse during dragging and expand afterward.
 - **Preview**: click to switch categories. Finder and previews use monochrome icons; settings retain color.
-- **Updates**: manually check GitHub Releases and read release notes in the app.
+- **Updates**: check GitHub Releases, read release notes, and download updates in the app; once ready, quit and open the DMG installer.
 - **Preferences**: Chinese or English, light or dark appearance, with system options; show the app in the menu bar (default), Dock, or both.
 
 ## Screenshots

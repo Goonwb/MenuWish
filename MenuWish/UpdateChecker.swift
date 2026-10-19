@@ -1,10 +1,11 @@
 import Foundation
 
-struct ReleaseDetails: Equatable {
+struct ReleaseDetails: Equatable, Sendable {
     let version: String
     let page: URL
     // nil means the fallback could only retrieve the version; empty means no notes were published.
     let notes: String?
+    var installer: ReleaseInstaller? = nil
 }
 
 enum UpdateCheckResult: Equatable {
@@ -25,6 +26,7 @@ enum UpdateChecker {
         let draft: Bool
         let prerelease: Bool
         let body: String?
+        let assets: [ReleaseInstaller.Asset]?
     }
 
     static func result(data: Data, statusCode: Int, currentVersion: String) throws -> UpdateCheckResult {
@@ -39,7 +41,8 @@ enum UpdateChecker {
             throw UpdateCheckError.invalidRelease
         }
         let details = ReleaseDetails(version: release.tag_name, page: release.html_url,
-            notes: release.body?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "")
+            notes: release.body?.trimmingCharacters(in: .whitespacesAndNewlines) ?? "",
+            installer: release.assets?.compactMap { ReleaseInstaller(asset: $0, tag: release.tag_name) }.first)
         return try compare(details, currentVersion: currentVersion)
     }
 
