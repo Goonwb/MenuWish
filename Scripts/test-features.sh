@@ -2,6 +2,7 @@
 set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 mkdir -p "$ROOT_DIR/build"
+python3 "$ROOT_DIR/Tests/OfficeTemplateChecks.py" "$ROOT_DIR"
 xcrun swiftc -swift-version 6 -module-cache-path "$ROOT_DIR/build/ModuleCache.noindex" \
   "$ROOT_DIR/Shared/NewFileKind.swift" \
   "$ROOT_DIR/Shared/MenuLayout.swift" \

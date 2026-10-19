@@ -453,7 +453,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
@@ -464,7 +464,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini;
 				PRODUCT_NAME = MenuWish;
 				SWIFT_VERSION = 6.0;
@@ -478,7 +478,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_ASSET_PATHS = "";
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
@@ -489,7 +489,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini;
 				PRODUCT_NAME = MenuWish;
 				SWIFT_VERSION = 6.0;
@@ -504,7 +504,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -514,7 +514,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini.FinderExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -530,7 +530,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development: awubo1999@gmail.com (U3L95K5S84)";
 				CODE_SIGN_STYLE = Manual;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 20;
+				CURRENT_PROJECT_VERSION = 21;
 				DEVELOPMENT_LANGUAGE = en;
 				DEVELOPMENT_TEAM = FVK2878B2R;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -540,7 +540,7 @@
 					"@executable_path/../Frameworks",
 					"@executable_path/../../../../Frameworks",
 				);
-				MARKETING_VERSION = 0.1.4;
+				MARKETING_VERSION = 0.1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = com.codex.RightMenuMini.FinderExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

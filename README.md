@@ -26,7 +26,7 @@
 
 通过原生 Finder Sync 扩展，为右键菜单添加常用操作：
 
-- **新建文件**：文本、Markdown、Numbers 表格、Pages 文稿、Keynote 讲演。重名自动编号，不覆盖已有文件。
+- **新建文件**：文本、Markdown、Numbers 表格、Pages 文稿、Keynote 讲演、Word 文档、Excel 表格和 PowerPoint 演示文稿。重名自动编号，不覆盖已有文件。
 - **进入终端**：在当前 Finder 位置打开 Terminal。
 - **拷贝路径**：复制所选项目路径；未选择项目时复制当前文件夹路径。
 
@@ -96,12 +96,14 @@ open build/Build/Products/Release/MenuWish.app
 
 ## 说明
 
-- 当前版本：`0.1.4`。
+- 当前版本：`0.1.5`。
 - iWork 文件使用内置原生模板创建，无需启动对应应用；打开和编辑需要对应应用。模板由 26.3.1 创建，旧版兼容性未验证。
+- Word、Excel 和 PowerPoint 文件分别使用 `.docx`、`.xlsx`、`.pptx` 格式，可由 Microsoft Office 或 WPS 打开。
+- 新建办公文件使用内置空白模板，无需安装或启动办公软件。Word 为一页空白文档，Excel 为一个空白工作表，PowerPoint 为一张 16:9 空白幻灯片；双击时使用系统默认应用打开。
 - 当前分发版本尚未公证。其他用户安装时，可能需要在 macOS 安全设置中手动允许打开。
 
 ## 许可证
 
 MenuWish 基于 [MIT License](LICENSE) 开源。
 
-功能图标采用 MIT 许可的 [Hugeicons Stroke Rounded](https://github.com/hugeicons/hugeicons) 与同风格的 MenuWish Markdown 图标。详见[图标来源与署名](Shared/MenuIcons/README.md)。
+功能图标采用 MIT 许可的 [Hugeicons Stroke Rounded](https://github.com/hugeicons/hugeicons)，包括新增的 Word、Excel 和 PowerPoint 文件图标；Markdown 使用同风格的自绘图标。详见[图标来源与署名](Shared/MenuIcons/README.md)。

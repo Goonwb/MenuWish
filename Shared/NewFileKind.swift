@@ -2,7 +2,7 @@ import Foundation
 
 /// Shared by the settings window and Finder extension so actions stay in sync.
 enum NewFileKind: String, CaseIterable {
-    case text, markdown, numbers, pages, keynote
+    case text, markdown, numbers, pages, keynote, word, excel, powerpoint
 
     var action: String { "new-\(rawValue)" }
 
@@ -13,6 +13,9 @@ enum NewFileKind: String, CaseIterable {
         case .numbers: return "isNewNumbersEnabled"
         case .pages: return "isNewPagesEnabled"
         case .keynote: return "isNewKeynoteEnabled"
+        case .word: return "isNewWordEnabled"
+        case .excel: return "isNewExcelEnabled"
+        case .powerpoint: return "isNewPowerPointEnabled"
         }
     }
 
@@ -23,6 +26,9 @@ enum NewFileKind: String, CaseIterable {
         case .numbers: return "numbers"
         case .pages: return "pages"
         case .keynote: return "key"
+        case .word: return "docx"
+        case .excel: return "xlsx"
+        case .powerpoint: return "pptx"
         }
     }
 
@@ -33,6 +39,9 @@ enum NewFileKind: String, CaseIterable {
         case .numbers: return "tablecells"
         case .pages: return "doc.richtext"
         case .keynote: return "rectangle.on.rectangle"
+        case .word: return "office-word"
+        case .excel: return "office-excel"
+        case .powerpoint: return "office-powerpoint"
         }
     }
 
@@ -45,6 +54,9 @@ enum NewFileKind: String, CaseIterable {
         case .numbers: return isEnglish ? "New Numbers Spreadsheet" : "新建 Numbers 表格"
         case .pages: return isEnglish ? "New Pages Document" : "新建 Pages 文稿"
         case .keynote: return isEnglish ? "New Keynote Presentation" : "新建 Keynote 讲演"
+        case .word: return isEnglish ? "New Word Document" : "新建 Word 文档"
+        case .excel: return isEnglish ? "New Excel Spreadsheet" : "新建 Excel 表格"
+        case .powerpoint: return isEnglish ? "New PowerPoint Presentation" : "新建 PowerPoint 演示文稿"
         }
     }
 

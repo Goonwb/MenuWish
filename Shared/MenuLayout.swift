@@ -27,7 +27,9 @@ struct MenuActionGroup: Equatable {
 
 enum MenuAction: String, CaseIterable {
     case text = "new-text", markdown = "new-markdown", numbers = "new-numbers"
-    case pages = "new-pages", keynote = "new-keynote", terminal, copyPath = "copy-path"
+    case pages = "new-pages", keynote = "new-keynote"
+    case word = "new-word", excel = "new-excel", powerpoint = "new-powerpoint"
+    case terminal, copyPath = "copy-path"
 
     var fileKind: NewFileKind? { NewFileKind.allCases.first { $0.action == rawValue } }
     var category: MenuCategory { fileKind == nil ? .tools : .files }

@@ -26,7 +26,7 @@
 
 Native Finder Sync shortcuts for everyday tasks:
 
-- **Create files**: Text, Markdown, Numbers, Pages, and Keynote. Duplicate names are numbered without overwriting existing files.
+- **Create files**: Text, Markdown, Numbers, Pages, Keynote, Word, Excel, and PowerPoint. Duplicate names are numbered without overwriting existing files.
 - **Open Terminal** at the current Finder location.
 - **Copy paths** of selected items, or the current folder when nothing is selected.
 
@@ -92,12 +92,14 @@ Action switches are unavailable until authorized, then restore default or saved 
 
 ## Notes
 
-- Current version: `0.1.4`.
+- Current version: `0.1.5`.
 - Creating iWork files does not launch the corresponding app; opening and editing requires Numbers, Pages, or Keynote. Templates were created with version 26.3.1; compatibility with older iWork versions is not yet verified.
+- Word, Excel, and PowerPoint files use `.docx`, `.xlsx`, and `.pptx`, respectively, and can be opened with Microsoft Office or WPS.
+- Office files are created from bundled blank templates without installing or launching an office app. Word starts with one blank page, Excel with one empty worksheet, and PowerPoint with one blank 16:9 slide. Double-clicking opens the file in the system's default app.
 - The distributed app is not notarized yet. Users may need to allow it manually in macOS security settings.
 
 ## License
 
 MenuWish is released under the [MIT License](LICENSE).
 
-Action icons use the MIT-licensed [Hugeicons Stroke Rounded](https://github.com/hugeicons/hugeicons) set and a matching MenuWish Markdown icon. See [icon sources and attribution](Shared/MenuIcons/README.md).
+Action icons use the MIT-licensed [Hugeicons Stroke Rounded](https://github.com/hugeicons/hugeicons) set, including the new Word, Excel, and PowerPoint file icons. Markdown uses a matching custom icon. See [icon sources and attribution](Shared/MenuIcons/README.md).

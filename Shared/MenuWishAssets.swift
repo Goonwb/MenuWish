@@ -22,6 +22,9 @@ enum MenuWishAssets {
         case "tablecells": return .systemGreen
         case "link": return .systemBlue
         case "rectangle.on.rectangle": return .systemBlue
+        case "office-word": return .systemBlue
+        case "office-excel": return .systemGreen
+        case "office-powerpoint": return .systemOrange
         case "square-terminal", "terminal": return .systemTeal
         default: return nil
         }
@@ -62,6 +65,7 @@ enum MenuWishAssets {
             let filenames = [
                 "file-text": "text", "markdown": "markdown", "tablecells": "numbers",
                 "doc.richtext": "pages", "rectangle.on.rectangle": "keynote",
+                "office-word": "word", "office-excel": "excel", "office-powerpoint": "powerpoint",
                 "square-terminal": "terminal", "terminal": "terminal", "link": "copy-path"
             ]
             guard let filename = filenames[name],

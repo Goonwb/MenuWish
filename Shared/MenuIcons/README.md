@@ -10,7 +10,7 @@ Finder menus and the host menu-layout preview deliberately use monochrome artwor
 
 On macOS 15.7.9, FinderSync transmits TIFF bitmap data and drops `NSImage.isTemplate`. Template images and SF Symbols therefore do not reliably turn white on hover. The public menu API does not forward custom view or hover handling. This fallback removes hue collisions with the system accent but does not implement selected-state recoloring, and cannot guarantee contrast for every accent/background combination. Do not claim full hover or theme compatibility from host previews or bitmap tests; inspect the real Finder menu for those cases.
 
-Six icons are from the MIT-licensed Hugeicons Stroke Rounded set, retrieved 2026-09-28 from https://github.com/hugeicons/hugeicons/tree/main/icons. Original artwork is unmodified. The bundled LICENSE-Hugeicons.txt applies to these files:
+Nine icons are from the MIT-licensed Hugeicons Stroke Rounded set. The original six were retrieved 2026-09-28 from https://github.com/hugeicons/hugeicons/tree/main/icons. The three Office file icons were retrieved 2026-10-19 at revision `c1b280d3964e115dfdefb58241f6d93ca68f7b6d`. All nine SVGs retain the original artwork unchanged. The bundled LICENSE-Hugeicons.txt applies to these files:
 
 | MenuWish file | Hugeicons source |
 | --- | --- |
@@ -20,8 +20,15 @@ Six icons are from the MIT-licensed Hugeicons Stroke Rounded set, retrieved 2026
 | keynote.svg | presentation-01.svg |
 | terminal.svg | command-line.svg |
 | copy-path.svg | link-04.svg |
+| word.svg | [doc-01.svg](https://github.com/hugeicons/hugeicons/blob/c1b280d3964e115dfdefb58241f6d93ca68f7b6d/icons/doc-01.svg) |
+| excel.svg | [xls-01.svg](https://github.com/hugeicons/hugeicons/blob/c1b280d3964e115dfdefb58241f6d93ca68f7b6d/icons/xls-01.svg) |
+| powerpoint.svg | [ppt-01.svg](https://github.com/hugeicons/hugeicons/blob/c1b280d3964e115dfdefb58241f6d93ca68f7b6d/icons/ppt-01.svg) |
 
 markdown.svg is a MenuWish drawing of M + down arrow, using the same grid and stroke specification. The existing MenuWish sparkle brand mark is preserved separately.
+
+The Office file icons use Hugeicons' matching DOC, XLS, and PPT file drawings.
+Settings use blue, green, and orange respectively;
+Finder and menu previews use the same monochrome rendering as the other actions.
 
 After a Release build, verify monochrome TIFF transport and light/dark cache isolation with:
 

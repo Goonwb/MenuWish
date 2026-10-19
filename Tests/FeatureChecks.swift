@@ -16,6 +16,7 @@ struct FeatureChecks {
         let folder = temporary.appendingPathComponent("中文 folder & \"quoted\"")
         try fm.createDirectory(at: folder, withIntermediateDirectories: true)
         for kind in NewFileKind.allCases {
+            try require(MenuAction(rawValue: kind.action)?.fileKind == kind, "File action is missing from the menu")
             let first = try NewFileCreator.create(kind, in: folder, templates: templates)
             try require(first.lastPathComponent == "Untitled.\(kind.fileExtension)", "Wrong filename")
             let expected = kind.usesTemplate ? try Data(contentsOf: templates.appendingPathComponent("Blank.\(kind.fileExtension)")) : Data()
@@ -32,10 +33,12 @@ struct FeatureChecks {
             _ = try NewFileCreator.create(.markdown, in: missing, templates: nil)
             throw NSError(domain: "Unexpected creation in a missing directory", code: 1)
         } catch is CocoaError {}
-        do {
-            _ = try NewFileCreator.create(.pages, in: folder, templates: missing)
-            throw NSError(domain: "Missing template silently accepted", code: 1)
-        } catch is CocoaError {}
+        for kind in NewFileKind.allCases where kind.usesTemplate {
+            do {
+                _ = try NewFileCreator.create(kind, in: folder, templates: missing)
+                throw NSError(domain: "Missing template silently accepted", code: 1)
+            } catch is CocoaError {}
+        }
         // Exclusive creation must skip broken symbolic links as well as regular files.
         try fm.createSymbolicLink(atPath: folder.appendingPathComponent("Untitled 3.md").path, withDestinationPath: missing.path)
         let afterLink = try NewFileCreator.create(.markdown, in: folder, templates: nil)
@@ -60,7 +63,7 @@ struct FeatureChecks {
         try require(MenuLayout(serialized: "bad data") == MenuLayout(), "Corrupt order did not recover")
         let migrated = MenuLayout(serialized: #"{"categories":["tools","tools","future"],"actions":{"files":["new-markdown","new-markdown","terminal","unknown"],"tools":["copy-path"]}}"#)
         try require(migrated.categories == [.tools, .files], "Category migration duplicated or lost a group")
-        try require(migrated.orderedActions(in: .files) == [.markdown, .text, .numbers, .pages, .keynote], "New actions were not appended safely")
+        try require(migrated.orderedActions(in: .files) == [.markdown, .text, .numbers, .pages, .keynote, .word, .excel, .powerpoint], "New actions were not appended safely")
         try require(migrated.orderedActions(in: .tools) == [.copyPath, .terminal], "Tool migration failed")
         var enabled = Dictionary(uniqueKeysWithValues: MenuAction.allCases.map { ($0.preferenceKey, true) })
         try require(layout.enabledGroups(values: enabled).first == [.copyPath, .terminal], "Menu ignored category order")
@@ -76,6 +79,17 @@ struct FeatureChecks {
             try require(MenuDisplayMode.resolved(mode.rawValue, legacyGrouped: false) == mode, "Mode did not persist")
         }
         let allEnabled = Dictionary(uniqueKeysWithValues: MenuAction.allCases.map { ($0.preferenceKey, true) })
+        let legacy = MenuLayout(serialized: #"{"unified":["copy-path","new-pages","terminal","new-keynote","new-text","new-numbers","new-markdown"]}"#)
+        try require(legacy.unifiedActions == [.copyPath, .pages, .terminal, .keynote, .text, .numbers, .markdown, .word, .excel, .powerpoint], "Office upgrade changed existing action order")
+        let legacyPreferences = ["isNewPagesEnabled": false, "isTerminalEnabled": false]
+        for action in [MenuAction.word, .excel, .powerpoint] {
+            try require(legacy.enabledActions(values: legacyPreferences).contains(action), "New Office action was not enabled by default")
+            var preferences = legacyPreferences
+            preferences[action.preferenceKey] = false
+            for mode in MenuDisplayMode.allCases {
+                try require(!legacy.menuGroups(mode: mode, values: preferences).flatMap(\.actions).contains(action), "Disabled Office action remained in menu")
+            }
+        }
         var categorized = MenuLayout()
         // Interleave a tool with file actions, then reorder inside a category.
         _ = categorized.moveUnified(.terminal, by: -1)
@@ -88,7 +102,7 @@ struct FeatureChecks {
         let groups = categorized.menuGroups(mode: .categorized, values: allEnabled)
         try require(groups.map(\.category) == [.tools, .files], "Category menu order is wrong")
         try require(groups[0].actions == [.terminal, .copyPath], "Tool submenu contains wrong actions")
-        try require(groups[1].actions == [.text, .markdown, .numbers, .keynote, .pages], "File submenu ignored item order")
+        try require(groups[1].actions == [.text, .markdown, .numbers, .keynote, .pages, .word, .excel, .powerpoint], "File submenu ignored item order")
         try require(groups[0].title(isEnglish: false) == "常用工具", "Category title is ambiguous")
         try require(groups[1].title(isEnglish: true) == "New Files", "English category title is wrong")
         for mode in [MenuDisplayMode.flat, .grouped] {

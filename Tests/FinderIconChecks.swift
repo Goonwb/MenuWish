@@ -17,7 +17,8 @@ struct FinderIconChecks {
         _ = NSApplication.shared
         let bundle = Bundle(path: CommandLine.arguments[1])!
         let names = ["file-text", "markdown", "tablecells", "doc.richtext",
-                     "rectangle.on.rectangle", "square-terminal", "link", "sparkles"]
+                     "rectangle.on.rectangle", "office-word", "office-excel", "office-powerpoint",
+                     "square-terminal", "link", "sparkles"]
         for name in names {
             var images: [NSImage] = []
             for (appearanceName, expected) in [(NSAppearance.Name.aqua, 0.0), (.darkAqua, 1.0)] {
@@ -86,7 +87,7 @@ struct FinderIconChecks {
             image.isTemplate = true
             precondition(NSImage(data: image.tiffRepresentation!)?.isTemplate == false)
         }
-        print("PASS: eight Finder icons retain light/dark monochrome pixels and transparency through TIFF at 1x/2x; cache variants and host template masks remain separate")
+        print("PASS: \(names.count) Finder icons retain light/dark monochrome pixels and transparency through TIFF at 1x/2x; cache variants and host template masks remain separate")
         print("PASS: colored settings icons render through NSImageView in light and dark appearances")
         print("CONFIRMED: TIFF round-trip drops the template flag for custom artwork and SF Symbols; hover recoloring remains unavailable")
     }
