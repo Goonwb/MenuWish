@@ -38,3 +38,5 @@ build/finder-icon-checks build/Build/Products/Release/MenuWishFinderExtension.ap
 ```
 
 These checks do not simulate Finder highlight backgrounds or replace visual theme testing.
+
+The Menu Actions sidebar item reuses the same MenuWish sparkle brand mark as the Finder parent menu, rendered at 20 pt with the selected and unselected sidebar colors.

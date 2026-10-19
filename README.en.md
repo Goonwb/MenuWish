@@ -46,7 +46,7 @@ Make the menu your own:
 </p>
 
 <p align="center">
-  <img src="docs/images/actions-en.webp" alt="MenuWish actions settings" width="820">
+  <img src="docs/images/actions-en.webp" alt="MenuWish menu actions settings" width="820">
 </p>
 
 ## Requirements
@@ -92,7 +92,7 @@ Action switches are unavailable until authorized, then restore default or saved 
 
 ## Notes
 
-- Current version: `0.1.5`.
+- Current version: `0.1.6`.
 - Creating iWork files does not launch the corresponding app; opening and editing requires Numbers, Pages, or Keynote. Templates were created with version 26.3.1; compatibility with older iWork versions is not yet verified.
 - Word, Excel, and PowerPoint files use `.docx`, `.xlsx`, and `.pptx`, respectively, and can be opened with Microsoft Office or WPS.
 - Office files are created from bundled blank templates without installing or launching an office app. Word starts with one blank page, Excel with one empty worksheet, and PowerPoint with one blank 16:9 slide. Double-clicking opens the file in the system's default app.

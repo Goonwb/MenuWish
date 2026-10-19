@@ -47,10 +47,10 @@
   <img src="docs/images/general-zh-CN.webp" alt="MenuWish 通用界面" width="820">
 </p>
 
-### 快捷功能与分类预览
+### 菜单功能与分类预览
 
 <p align="center">
-  <img src="docs/images/actions-zh-CN.webp" alt="MenuWish 快捷功能界面" width="820">
+  <img src="docs/images/actions-zh-CN.webp" alt="MenuWish 菜单功能界面" width="820">
 </p>
 
 ## 系统要求
@@ -96,7 +96,7 @@ open build/Build/Products/Release/MenuWish.app
 
 ## 说明
 
-- 当前版本：`0.1.5`。
+- 当前版本：`0.1.6`。
 - iWork 文件使用内置原生模板创建，无需启动对应应用；打开和编辑需要对应应用。模板由 26.3.1 创建，旧版兼容性未验证。
 - Word、Excel 和 PowerPoint 文件分别使用 `.docx`、`.xlsx`、`.pptx` 格式，可由 Microsoft Office 或 WPS 打开。
 - 新建办公文件使用内置空白模板，无需安装或启动办公软件。Word 为一页空白文档，Excel 为一个空白工作表，PowerPoint 为一张 16:9 空白幻灯片；双击时使用系统默认应用打开。

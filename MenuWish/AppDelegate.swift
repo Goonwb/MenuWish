@@ -575,7 +575,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
             for subview in button.subviews {
                 if let imageView = subview as? NSImageView {
-                    imageView.contentTintColor = isSelected ? sidebarSelectedForegroundColor : .secondaryLabelColor
+                    let foreground: NSColor = isSelected ? sidebarSelectedForegroundColor : .secondaryLabelColor
+                    if buttonTab == .actions {
+                        imageView.effectiveAppearance.performAsCurrentDrawingAppearance {
+                            imageView.image = MenuWishAssets.image(named: "sparkles",
+                                size: NSSize(width: 20, height: 20), tint: foreground)
+                        }
+                    }
+                    imageView.contentTintColor = foreground
+                    imageView.setAccessibilityLabel(sidebarTitle(for: buttonTab))
                 } else if let label = subview as? NSTextField {
                     label.textColor = isSelected ? sidebarSelectedForegroundColor : .secondaryLabelColor
                     label.font = .systemFont(ofSize: 13, weight: isSelected ? .semibold : .medium)
@@ -627,7 +635,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         brandStack.translatesAutoresizingMaskIntoConstraints = false
 
         let generalButton = sidebarNavigationButton(symbol: "gearshape", title: sidebarTitle(for: .general), tab: .general)
-        let actionsButton = sidebarNavigationButton(symbol: "contextualmenu.and.cursorarrow", title: sidebarTitle(for: .actions), tab: .actions)
+        let actionsButton = sidebarNavigationButton(symbol: "sparkles", title: sidebarTitle(for: .actions), tab: .actions)
 
         let navStack = NSStackView(views: [generalButton, actionsButton])
         navStack.orientation = .vertical
@@ -664,7 +672,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         case .general:
             return AppText.localized("通用", "General")
         case .actions:
-            return AppText.localized("快捷功能", "Actions")
+            return AppText.localized("菜单功能", "Menu Actions")
         }
     }
 
@@ -678,7 +686,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         button.layer?.cornerCurve = .continuous
 
         let icon = NSImageView()
-        icon.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)
+        icon.image = MenuWishAssets.image(named: symbol, size: NSSize(width: 20, height: 20))
+            ?? NSImage(systemSymbolName: symbol, accessibilityDescription: title)
+        icon.setAccessibilityLabel(title)
         icon.symbolConfiguration = .init(pointSize: 15, weight: .semibold)
         icon.contentTintColor = .secondaryLabelColor
         icon.translatesAutoresizingMaskIntoConstraints = false
@@ -938,7 +948,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         iconView.contentTintColor = .controlAccentColor
         iconView.translatesAutoresizingMaskIntoConstraints = false
 
-        let titleLabel = NSTextField(labelWithString: AppText.localized("调整快捷功能顺序", "Reorder Quick Actions"))
+        let titleLabel = NSTextField(labelWithString: AppText.localized("调整菜单功能顺序", "Reorder Menu Actions"))
         titleLabel.font = .systemFont(ofSize: 15.5, weight: .bold)
         titleLabel.textColor = .labelColor
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
