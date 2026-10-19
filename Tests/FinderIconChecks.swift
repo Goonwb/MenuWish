@@ -2,6 +2,17 @@ import AppKit
 
 @main
 struct FinderIconChecks {
+    static func hasVisiblePixels(_ bitmap: NSBitmapImageRep) -> Bool {
+        for y in 0..<bitmap.pixelsHigh {
+            for x in 0..<bitmap.pixelsWide {
+                if let pixel = bitmap.colorAt(x: x, y: y), pixel.alphaComponent > 0.5 {
+                    return true
+                }
+            }
+        }
+        return false
+    }
+
     @MainActor static func main() {
         _ = NSApplication.shared
         let bundle = Bundle(path: CommandLine.arguments[1])!
@@ -43,6 +54,30 @@ struct FinderIconChecks {
             precondition(lightAgain === images[0])
             let template = MenuWishAssets.image(named: name, bundle: bundle)!
             precondition(template.isTemplate && template !== images[0] && template !== images[1])
+            // Settings rows and reorder sheets use precolored RGBA artwork.
+            // Test actual NSImageView output, not just successful SVG decoding.
+            for appearanceName in [NSAppearance.Name.aqua, .darkAqua] {
+                let appearance = NSAppearance(named: appearanceName)!
+                appearance.performAsCurrentDrawingAppearance {
+                    let tint = MenuWishAssets.actionColor(for: name) ?? .systemBlue
+                    let image = MenuWishAssets.image(named: name,
+                        size: NSSize(width: 18, height: 18), bundle: bundle, tint: tint)!
+                    precondition(!image.isTemplate)
+                    let reps = image.representations.compactMap { $0 as? NSBitmapImageRep }
+                    precondition(Set(reps.map(\.pixelsWide)) == [18, 36])
+                    for rep in reps {
+                        precondition(rep.samplesPerPixel == 4 && rep.hasAlpha)
+                        precondition(hasVisiblePixels(rep), "Blank settings icon: \(name)")
+                    }
+                    let view = NSImageView(frame: NSRect(x: 0, y: 0, width: 18, height: 18))
+                    view.appearance = appearance
+                    view.image = image
+                    view.contentTintColor = tint
+                    let rendered = view.bitmapImageRepForCachingDisplay(in: view.bounds)!
+                    view.cacheDisplay(in: view.bounds, to: rendered)
+                    precondition(hasVisiblePixels(rendered), "Blank image view: \(name)")
+                }
+            }
             precondition(NSImage(data: template.tiffRepresentation!)?.isTemplate == false,
                          "TIFF behavior changed; revisit native Finder template handling")
         }
@@ -52,6 +87,7 @@ struct FinderIconChecks {
             precondition(NSImage(data: image.tiffRepresentation!)?.isTemplate == false)
         }
         print("PASS: eight Finder icons retain light/dark monochrome pixels and transparency through TIFF at 1x/2x; cache variants and host template masks remain separate")
+        print("PASS: colored settings icons render through NSImageView in light and dark appearances")
         print("CONFIRMED: TIFF round-trip drops the template flag for custom artwork and SF Symbols; hover recoloring remains unavailable")
     }
 }

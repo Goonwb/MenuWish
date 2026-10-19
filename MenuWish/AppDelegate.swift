@@ -1203,7 +1203,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         tile.alphaValue = isActionEnabled ? 1.0 : 0.45
 
         let icon = NSImageView()
-        if let iconImage = MenuWishAssets.image(named: action.symbolName, size: NSSize(width: 18, height: 18)) {
+        if let iconImage = MenuWishAssets.image(named: action.symbolName, size: NSSize(width: 18, height: 18), tint: color) {
             icon.image = iconImage
         } else {
             icon.image = NSImage(systemSymbolName: action.symbolName, accessibilityDescription: nil)
@@ -2262,7 +2262,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         registerIconTile(iconTile, color: color)
 
         let icon = NSImageView()
-        if let iconImage = MenuWishAssets.image(named: symbol, size: NSSize(width: iconSize, height: iconSize)) {
+        if let iconImage = MenuWishAssets.image(named: symbol, size: NSSize(width: iconSize, height: iconSize), tint: color) {
             icon.image = iconImage
         } else {
             icon.image = NSImage(systemSymbolName: symbol, accessibilityDescription: title)

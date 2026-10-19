@@ -79,13 +79,15 @@ enum MenuWishAssets {
         for scale in [1.0, 2.0] {
             let pxW = Int(size.width * scale)
             let pxH = Int(size.height * scale)
-            let colorSpace = color == nil ? CGColorSpaceCreateDeviceGray() : CGColorSpace(name: CGColorSpace.sRGB)!
+            // Use the same RGBA drawing path for templates and colored artwork.
+            // Avoid a separate gray + alpha SVG rendering path for host controls.
+            let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
             guard let ctx = CGContext(
                 data: nil,
                 width: pxW,
                 height: pxH,
                 bitsPerComponent: 8,
-                bytesPerRow: pxW * (color == nil ? 2 : 4),
+                bytesPerRow: pxW * 4,
                 space: colorSpace,
                 bitmapInfo: CGImageAlphaInfo.premultipliedLast.rawValue
             ) else {
@@ -113,9 +115,7 @@ enum MenuWishAssets {
 
             if let cgImage = ctx.makeImage() {
                 let rep = NSBitmapImageRep(cgImage: cgImage)
-                if color != nil {
-                    rep.setProperty(.colorSyncProfileData, withValue: NSColorSpace.sRGB.iccProfileData)
-                }
+                rep.setProperty(.colorSyncProfileData, withValue: NSColorSpace.sRGB.iccProfileData)
                 rep.size = size
                 rendered.addRepresentation(rep)
             }

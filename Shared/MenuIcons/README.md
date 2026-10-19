@@ -2,6 +2,8 @@
 
 One 24 × 24 grid, 1.5-unit strokes, rounded ends and corners. The app and Finder extension share these SVG sources. Menu icons are 16 pt with 1× and 2× representations.
 
+All custom artwork is rasterized into sRGB RGBA bitmaps. Colored settings icons have their tint baked into the pixels rather than relying on template tinting in `NSImageView`; template callers also use RGBA instead of gray + alpha contexts. This avoids a separate grayscale SVG rendering path. Local rendering checks passed on macOS 15.7.9; the reporter confirmed that the test build restored the missing icons on the affected colleague’s Mac (reported as macOS 27).
+
 The host app keeps colored preference rows and reorder dialogs using the shared `MenuWishAssets.actionColor` palette: neutral gray for Text, indigo for Markdown, green for Numbers, orange for Pages, blue for Keynote and Copy Path, and teal for Terminal.
 
 Finder menus and the host menu-layout preview deliberately use monochrome artwork. `finderMenuImage` resolves black for the system's light appearance and white for dark appearance when each menu opens, including the MenuWish parent icon. The RGB pixels and transparency are baked into 1× and 2× TIFF representations; the cache distinguishes resolved foreground colors. App-specific appearance preferences do not determine the Finder icon color.
