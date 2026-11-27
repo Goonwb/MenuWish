@@ -37,7 +37,7 @@ Make the menu your own:
 - **Ordering**: reorder actions and drag category headers. Categories collapse during dragging and expand afterward.
 - **Preview**: click to switch categories. Finder and previews use monochrome icons; settings retain color.
 - **Updates**: check GitHub Releases, read release notes, and download updates in the app; once ready, quit and open the DMG installer.
-- **Preferences**: Chinese or English, light or dark appearance, with system options; show the app in the menu bar (default), Dock, or both.
+- **Preferences**: Chinese or English, light or dark appearance, with system options; show the app in the menu bar (default), Dock, both, or neither (quit when the last window closes; reopen settings via Spotlight; Finder actions launch the app on demand).
 
 ## Screenshots
 
