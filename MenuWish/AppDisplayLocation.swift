@@ -7,6 +7,7 @@ enum AppDisplayLocation: String, CaseIterable {
     static func resolved(_ storedValue: String?) -> Self { Self(rawValue: storedValue ?? "") ?? .menuBar }
     var showsMenuBar: Bool { self == .menuBar || self == .both }
     var showsDock: Bool { self == .dock || self == .both }
+    var quitsWhenLastWindowCloses: Bool { self == .hidden }
 
     func title(isEnglish: Bool) -> String {
         switch self {

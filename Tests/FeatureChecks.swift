@@ -131,6 +131,7 @@ struct FeatureChecks {
         try require(AppDisplayLocation.resolved("obsolete") == .menuBar, "Invalid display preference hid all entry points")
         for location in AppDisplayLocation.allCases {
             try require(AppDisplayLocation.resolved(location.rawValue) == location, "Display mode did not round-trip")
+            try require(location.quitsWhenLastWindowCloses == (location == .hidden), "Only hidden mode should quit on last window close")
         }
         try require(AppDisplayLocation.menuBar.showsMenuBar && !AppDisplayLocation.menuBar.showsDock, "Menu-bar-only mode is incorrect")
         try require(!AppDisplayLocation.hidden.showsMenuBar && !AppDisplayLocation.hidden.showsDock, "Hidden mode should show neither entry point")
