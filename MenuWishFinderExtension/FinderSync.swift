@@ -329,6 +329,7 @@ final class FinderSync: FIFinderSync {
         }
 
         let configuration = NSWorkspace.OpenConfiguration()
+        configuration.arguments = ["--finder-action"]
         configuration.activates = false
         configuration.promptsUserIfNeeded = false
         configuration.addsToRecentItems = false

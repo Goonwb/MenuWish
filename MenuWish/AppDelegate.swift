@@ -168,6 +168,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     private var statusItem: NSStatusItem?
     private var statusMenuAuthorizationItem: NSMenuItem?
     private var receivedActionURL = false
+    private let launchedForFinderAction = CommandLine.arguments.contains("--finder-action")
     private let preferences = MenuWishPreferences.store()
     private var currentTab: SidebarTab = .general
     private var reorderSheet: NSWindow?
@@ -245,8 +246,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         if let bundledIcon = bundledApplicationIconImage() {
             NSApp.applicationIconImage = bundledIcon
         }
-        applyDisplayLocation()
-
+        // Finder-only launches must stay accessory apps and never create a status item.
+        guard !launchedForFinderAction else { return }
 
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
             guard let self, !self.receivedActionURL else {
@@ -270,6 +271,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func showWindow() {
+        applyDisplayLocation()
         if window == nil {
             buildWindow()
         }
@@ -408,7 +410,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let location = displayLocation
         let policy: NSApplication.ActivationPolicy = location.showsDock ? .regular : .accessory
         // Create the menu-bar entry before hiding Dock; show Dock before removing
-        // the menu-bar entry. There is always a reachable settings entry point.
+        // the menu-bar entry. In hidden mode, Spotlight or Finder can reopen settings.
         if location.showsMenuBar { configureStatusItem() }
         if NSApp.activationPolicy() != policy && !NSApp.setActivationPolicy(policy) {
             preferences.set(appliedDisplayLocation.rawValue, forKey: AppDisplayLocation.preferenceKey)
@@ -753,7 +755,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         let locationRow = settingsPopUpRow(
             symbol: "dock.rectangle",
             title: AppText.localized("应用入口", "App Access"),
-            detail: AppText.localized("选择在菜单栏或 Dock 中显示 MenuWish", "Show MenuWish in the menu bar or Dock"),
+            detail: AppText.localized("选择显示位置；隐藏后可通过聚焦搜索打开", "Choose where to show MenuWish; reopen via Spotlight when hidden"),
             key: AppDisplayLocation.preferenceKey,
             items: displayLocationItems,
             controlWidth: 150,
@@ -2978,7 +2980,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         rowDetailLabels[MenuWishPreferences.appearanceMode]?.stringValue = AppText.localized("选择浅色、深色或跟随系统", "Choose light, dark, or system appearance")
         rowTitleLabels["version"]?.stringValue = AppText.localized("当前版本", "Current Version")
         rowTitleLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("应用入口", "App Access")
-        rowDetailLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("选择在菜单栏或 Dock 中显示 MenuWish", "Show MenuWish in the menu bar or Dock")
+        rowDetailLabels[AppDisplayLocation.preferenceKey]?.stringValue = AppText.localized("选择显示位置；隐藏后可通过聚焦搜索打开", "Choose where to show MenuWish; reopen via Spotlight when hidden")
         updatePopup(AppDisplayLocation.preferenceKey, items: displayLocationItems)
 
         updatePopup(
